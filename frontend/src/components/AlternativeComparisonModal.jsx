@@ -24,15 +24,6 @@ export default function AlternativeComparisonModal({
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  // Prevent background scroll while modal is active
-  useEffect(() => {
-    if (medicine) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [medicine]);
 
   useEffect(() => {
     if (!medicine) return;
@@ -62,42 +53,63 @@ export default function AlternativeComparisonModal({
   if (!medicine) return null;
 
   return createPortal(
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 99999,
-        background: 'rgba(15, 23, 42, 0.58)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.25rem',
-        animation: 'fadeIn 0.25s ease-out',
-      }}
-    >
-      <div style={{
-        background: 'var(--bg-surface)',
-        borderRadius: '18px',
-        border: '1px solid var(--border-subtle)',
-        maxWidth: '880px',
-        width: '100%',
-        maxHeight: '88vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-        overflow: 'hidden',
-        animation: 'fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
-      }}>
+    <>
+      {/* 1. Backdrop Overlay: Apple-style glassmorphism fading the main content, sits below sticky Navbar (1001) & Footer (1001) */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 800,
+          background: 'rgba(15, 23, 42, 0.48)',
+          backdropFilter: 'blur(16px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+          animation: 'fadeIn 0.25s ease-out',
+          cursor: 'pointer',
+        }}
+      />
+
+      {/* 2. Modal Centering Container: Centers the comparison card gracefully in viewport, above backdrop */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 1002,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1.25rem',
+          pointerEvents: 'none',
+        }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            background: 'var(--bg-surface)',
+            borderRadius: '18px',
+            border: '1px solid var(--border-subtle)',
+            maxWidth: '880px',
+            width: '100%',
+            maxHeight: 'calc(100vh - 120px)',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            overflow: 'hidden',
+            animation: 'fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'auto',
+            cursor: 'default',
+          }}
+        >
         {/* Header */}
         <div style={{
           padding: '1.25rem 1.5rem',
@@ -143,7 +155,7 @@ export default function AlternativeComparisonModal({
         </div>
 
         {/* Body */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ padding: '1.5rem', overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {/* Baseline Prescribed Medicine Card */}
           <div style={{
             background: 'var(--bg-surface-elevated)',
@@ -391,7 +403,8 @@ export default function AlternativeComparisonModal({
           )}
         </div>
       </div>
-    </div>,
-    document.body
-  );
+    </div>
+  </>,
+  document.body
+);
 }

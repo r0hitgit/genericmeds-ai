@@ -74,7 +74,7 @@ export default function Navbar({
     <header style={{
       position: 'sticky',
       top: 0,
-      zIndex: 50,
+      zIndex: 1001,
       backgroundColor: 'var(--bg-surface)',
       borderBottom: '1px solid var(--border-subtle)',
     }}>

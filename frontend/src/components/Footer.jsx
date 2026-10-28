@@ -5,6 +5,8 @@ import BrandLogo from './BrandLogo';
 export default function Footer({ language }) {
   return (
     <footer style={{
+      position: 'relative',
+      zIndex: 1001,
       background: 'var(--bg-surface)',
       borderTop: '1px solid var(--border-subtle)',
       marginTop: 'auto',
