@@ -59,12 +59,11 @@ export default function AlternativeComparisonModal({
         position: 'fixed',
         inset: 0,
         zIndex: 1000,
-        background: 'rgba(15, 23, 42, 0.65)',
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '1rem',
-        animation: 'fadeInScale 0.15s ease-out',
       }}
     >
       <div style={{
@@ -76,8 +75,9 @@ export default function AlternativeComparisonModal({
         maxHeight: '88vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: 'var(--card-shadow-hover)',
+        boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08)',
         overflow: 'hidden',
+        animation: 'fadeInScale 0.15s ease-out',
       }}>
         {/* Header */}
         <div style={{
