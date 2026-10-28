@@ -59,25 +59,28 @@ export default function AlternativeComparisonModal({
         position: 'fixed',
         inset: 0,
         zIndex: 1000,
-        background: 'transparent',
+        background: 'rgba(28, 25, 23, 0.45)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '1rem',
+        animation: 'fadeIn 0.2s ease-out',
       }}
     >
       <div style={{
         background: 'var(--bg-surface)',
-        borderRadius: '14px',
+        borderRadius: '16px',
         border: '1px solid var(--border-subtle)',
         maxWidth: '880px',
         width: '100%',
         maxHeight: '88vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 10px 20px -5px rgba(0, 0, 0, 0.15)',
         overflow: 'hidden',
-        animation: 'fadeInScale 0.15s ease-out',
+        animation: 'fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
       }}>
         {/* Header */}
         <div style={{
