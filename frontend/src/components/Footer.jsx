@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pill, ExternalLink, Phone } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Footer({ language }) {
   return (
@@ -19,10 +20,13 @@ export default function Footer({ language }) {
           gap: '2rem',
         }}>
           {/* Brand Info matching MedBridgeAi / GenericMeds style */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--terracotta-600)', letterSpacing: '-0.02em' }}>
-              GenericMeds<span style={{ color: 'var(--text-main)' }}>AI</span>
-            </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <BrandLogo size={24} />
+              <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--terracotta-600)', letterSpacing: '-0.02em' }}>
+                GenericMeds<span style={{ color: 'var(--text-main)' }}>AI</span>
+              </span>
+            </div>
             <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: 1.6, fontSize: '0.8rem' }}>
               India's verified generic medicine discovery and PMBJP price comparison platform. Dedicated to reducing out-of-pocket healthcare expenses.
             </p>

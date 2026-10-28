@@ -7,9 +7,12 @@ import {
   ExternalLink,
   Clock,
   AlertCircle,
-  RotateCcw
+  RotateCcw,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { api } from '../services/api';
+import { quickLookupPincode } from '../utils/pincodeLookup';
 
 export default function KendraLocator({ language }) {
   const [radiusKm, setRadiusKm] = useState(10);
@@ -22,6 +25,10 @@ export default function KendraLocator({ language }) {
   const [stateName, setStateName] = useState('');
   const [district, setDistrict] = useState('');
   const [filter24x7, setFilter24x7] = useState(false);
+
+  // PIN auto-detection state
+  const [autoDetectInfo, setAutoDetectInfo] = useState(null);
+  const [pinDetecting, setPinDetecting] = useState(false);
 
   // Results state
   const [loading, setLoading] = useState(false);
@@ -93,6 +100,59 @@ export default function KendraLocator({ language }) {
     );
   };
 
+  const handlePincodeChange = async (e) => {
+    const rawVal = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setPincode(rawVal);
+    setError(null);
+
+    if (rawVal.length === 6) {
+      // 1. Instant client-side lookup (0ms)
+      const instant = quickLookupPincode(rawVal);
+      if (instant) {
+        setDistrict(instant.district);
+        setStateName(instant.state);
+        setAutoDetectInfo({
+          district: instant.district,
+          state: instant.state,
+          source: 'instant',
+        });
+      }
+
+      // 2. Authoritative backend lookup to check kendra database records and precise localities
+      setPinDetecting(true);
+      try {
+        const res = await api.lookupPincode(rawVal);
+        if (res && res.found) {
+          const detDistrict = res.city || res.district || (instant ? instant.district : '');
+          const detState = res.state || (instant ? instant.state : '');
+          if (detDistrict) setDistrict(detDistrict);
+          if (detState) setStateName(detState);
+          setAutoDetectInfo({
+            city: res.city,
+            district: detDistrict,
+            state: detState,
+            source: res.source,
+          });
+        }
+      } catch (err) {
+        // Instant local lookup preserved if network error
+      } finally {
+        setPinDetecting(false);
+      }
+    } else {
+      setAutoDetectInfo(null);
+    }
+  };
+
+  const handleResetManualSearch = () => {
+    setPincode('');
+    setDistrict('');
+    setStateName('');
+    setAutoDetectInfo(null);
+    setError(null);
+    loadAllKendras();
+  };
+
   const handleManualSearch = async (e) => {
     e.preventDefault();
     if (!pincode.trim() && !stateName.trim() && !district.trim()) {
@@ -120,7 +180,7 @@ export default function KendraLocator({ language }) {
         ? `Jan Aushadhi Kendras in PIN ${pincode}`
         : `Jan Aushadhi Kendras in ${district || stateName}`;
       setResultsHeader(title);
-      setResultsBadge(`${data.total} Stores Found`);
+      setResultsBadge(`${data.total_found ?? data.total ?? data.kendras?.length ?? 0} Stores Found`);
       setWiderRadiusSuggested(null);
     } catch (err) {
       setError(err.message || 'Manual search failed.');
@@ -273,18 +333,47 @@ export default function KendraLocator({ language }) {
             </p>
           </div>
 
-          <form onSubmit={handleManualSearch} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <form onSubmit={handleManualSearch} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: '0.4rem' }}>
-              <div>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <input
                   type="text"
+                  inputMode="numeric"
                   maxLength={6}
                   value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
+                  onChange={handlePincodeChange}
                   placeholder="PIN (e.g. 110029)"
                   className="form-input"
-                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.8rem' }}
+                  style={{
+                    padding: '0.45rem 0.65rem',
+                    paddingRight: autoDetectInfo || pinDetecting ? '1.75rem' : '0.65rem',
+                    fontSize: '0.8rem',
+                    width: '100%',
+                  }}
                 />
+                {pinDetecting && (
+                  <Loader2
+                    size={13}
+                    className="animate-spin"
+                    style={{
+                      position: 'absolute',
+                      right: '7px',
+                      color: 'var(--terracotta-600)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+                {!pinDetecting && autoDetectInfo && (
+                  <CheckCircle2
+                    size={13}
+                    style={{
+                      position: 'absolute',
+                      right: '7px',
+                      color: 'var(--green-700)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
               </div>
 
               <div>
@@ -294,7 +383,7 @@ export default function KendraLocator({ language }) {
                   onChange={(e) => setDistrict(e.target.value)}
                   placeholder="District / City"
                   className="form-input"
-                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.8rem' }}
+                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.8rem', width: '100%' }}
                 />
               </div>
 
@@ -305,16 +394,37 @@ export default function KendraLocator({ language }) {
                   onChange={(e) => setStateName(e.target.value)}
                   placeholder="State"
                   className="form-input"
-                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.8rem' }}
+                  style={{ padding: '0.45rem 0.65rem', fontSize: '0.8rem', width: '100%' }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.25rem' }}>
+            {/* Auto-detected notification badge */}
+            {autoDetectInfo && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                fontSize: '0.74rem',
+                color: 'var(--green-700)',
+                background: 'rgba(21, 128, 61, 0.08)',
+                padding: '0.3rem 0.65rem',
+                borderRadius: '6px',
+                border: '1px solid rgba(21, 128, 61, 0.2)',
+                animation: 'fadeIn 0.2s ease-out',
+              }}>
+                <CheckCircle2 size={13} style={{ flexShrink: 0 }} />
+                <span>
+                  Auto-detected: <strong>{autoDetectInfo.city || autoDetectInfo.district}</strong>, <strong>{autoDetectInfo.state}</strong>
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.2rem' }}>
               <button
                 type="button"
-                onClick={loadAllKendras}
-                style={{ fontSize: '0.75rem', color: 'var(--terracotta-600)', textDecoration: 'underline' }}
+                onClick={handleResetManualSearch}
+                style={{ fontSize: '0.75rem', color: 'var(--terracotta-600)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 Reset
               </button>

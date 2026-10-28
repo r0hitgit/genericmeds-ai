@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { api } from '../services/api';
+import BrandLogo from './BrandLogo';
 
 export default function Navbar({
   activeTab,
@@ -104,17 +105,18 @@ export default function Navbar({
 
       {/* Main Navbar */}
       <div className="max-w-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
-        {/* Brand Logo */}
+        {/* Brand Logo matching favicon */}
         <div
           onClick={() => setActiveTab('home')}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.65rem',
             cursor: 'pointer',
             userSelect: 'none',
           }}
         >
+          <BrandLogo size={28} />
           <span style={{
             fontSize: '1.25rem',
             fontWeight: 800,

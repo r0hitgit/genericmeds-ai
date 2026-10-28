@@ -83,6 +83,10 @@ export const api = {
     return apiClient.get('/api/v1/kendras/search', { params });
   },
 
+  lookupPincode: (pincode) => {
+    return apiClient.get('/api/v1/kendras/lookup-pin', { params: { pincode } });
+  },
+
   getAllKendras: ({ q, is_24x7, limit = 50 } = {}) => {
     const params = { limit };
     if (q) params.q = q;

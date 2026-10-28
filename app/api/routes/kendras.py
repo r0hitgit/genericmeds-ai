@@ -19,8 +19,21 @@ from app.schemas.kendra import (
 )
 from app.services.kendra_search import KendraSearchService
 from app.services.kendra_import import KendraImportService
+from app.services.pincode_service import lookup_pincode
 
 router = APIRouter(prefix="/api/v1/kendras", tags=["Jan Aushadhi Kendras & Guidelines"])
+
+
+@router.get("/lookup-pin", status_code=status.HTTP_200_OK)
+def lookup_pincode_locality(
+    pincode: str = Query(..., description="6-digit Indian PIN code to resolve locality, city, district, state"),
+    db: Session = Depends(get_db),
+):
+    """
+    Auto-detect district/city and state from a 6-digit Indian PIN code.
+    Used for instant auto-completion in Jan Aushadhi Kendra search.
+    """
+    return lookup_pincode(pincode=pincode, db=db)
 
 
 @router.get("/nearby", response_model=KendraNearbyResponse, status_code=status.HTTP_200_OK)
