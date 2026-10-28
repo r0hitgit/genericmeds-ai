@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Pill } from 'lucide-react';
 import Navbar from './components/Navbar';
-import MedicineSearch from './components/MedicineSearch';
+import Home from './components/Home';
+import Medicines from './components/Medicines';
 import ComparisonSandbox from './components/ComparisonSandbox';
 import KendraLocator from './components/KendraLocator';
 import TherapeuticGroups from './components/TherapeuticGroups';
@@ -9,11 +10,14 @@ import ClinicalGuidelines from './components/ClinicalGuidelines';
 import AIChatAssistant from './components/AIChatAssistant';
 import DataSources from './components/DataSources';
 import Footer from './components/Footer';
+import { api } from './services/api';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('search');
+  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('gm_tab') || 'home');
   const [language, setLanguage] = useState(() => localStorage.getItem('gm_lang') || 'en');
   const [theme, setTheme] = useState(() => localStorage.getItem('gm_theme') || 'light');
+
+  // Comparison Sandbox state
   const [sandboxItems, setSandboxItems] = useState(() => {
     try {
       const saved = localStorage.getItem('gm_sandbox');
@@ -22,7 +26,23 @@ export default function App() {
       return [];
     }
   });
-  const [searchInitialQuery, setSearchInitialQuery] = useState('');
+
+  // Global Preserved Search State (Stays alive across tab navigation!)
+  const [searchQuery, setSearchQuery] = useState(() => localStorage.getItem('gm_query') || '');
+  const [searchResults, setSearchResults] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gm_results');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [janAushadhiOnly, setJanAushadhiOnly] = useState(() => {
+    return localStorage.getItem('gm_jan_only') === 'true';
+  });
+
   const [toastMessage, setToastMessage] = useState(null);
 
   // Sync theme
@@ -30,6 +50,11 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('gm_theme', theme);
   }, [theme]);
+
+  // Sync tab
+  useEffect(() => {
+    localStorage.setItem('gm_tab', activeTab);
+  }, [activeTab]);
 
   // Sync language
   useEffect(() => {
@@ -41,11 +66,42 @@ export default function App() {
     localStorage.setItem('gm_sandbox', JSON.stringify(sandboxItems));
   }, [sandboxItems]);
 
+  // Sync search state in localStorage to ensure it never gets lost!
+  useEffect(() => {
+    localStorage.setItem('gm_query', searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (searchResults) {
+      localStorage.setItem('gm_results', JSON.stringify(searchResults));
+    }
+  }, [searchResults]);
+
+  useEffect(() => {
+    localStorage.setItem('gm_jan_only', String(janAushadhiOnly));
+  }, [janAushadhiOnly]);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
     }, 3000);
+  };
+
+  // Central search executor
+  const handleExecuteSearch = async (term = searchQuery, filterJan = janAushadhiOnly) => {
+    const trimmed = (term || '').trim();
+    if (!trimmed) return;
+    setSearchLoading(true);
+    setSearchError(null);
+    try {
+      const data = await api.searchMedicines(trimmed, 24, 0, filterJan);
+      setSearchResults(data);
+    } catch (err) {
+      setSearchError(err.message || 'Error occurred while querying catalogue.');
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const handleAddToSandbox = (medicine) => {
@@ -68,8 +124,9 @@ export default function App() {
   };
 
   const handleSelectGroup = (groupName) => {
-    setSearchInitialQuery(groupName);
-    setActiveTab('search');
+    setSearchQuery(groupName);
+    handleExecuteSearch(groupName, janAushadhiOnly);
+    setActiveTab('medicines');
   };
 
   const handleLocateStores = () => {
@@ -114,15 +171,37 @@ export default function App() {
         sandboxCount={sandboxItems.length}
       />
 
-      {/* Main App Content Viewport */}
+      {/* Main Viewport */}
       <main style={{ flex: 1, padding: '2rem 0 3.5rem' }}>
         <div className="max-w-content">
-          {activeTab === 'search' && (
-            <MedicineSearch
+          {activeTab === 'home' && (
+            <Home
               language={language}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              searchResults={searchResults}
+              searchLoading={searchLoading}
+              searchError={searchError}
+              onExecuteSearch={handleExecuteSearch}
               onAddToSandbox={handleAddToSandbox}
               onLocateStores={handleLocateStores}
-              initialQuery={searchInitialQuery}
+              setActiveTab={setActiveTab}
+            />
+          )}
+
+          {activeTab === 'medicines' && (
+            <Medicines
+              language={language}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              searchResults={searchResults}
+              searchLoading={searchLoading}
+              searchError={searchError}
+              janAushadhiOnly={janAushadhiOnly}
+              setJanAushadhiOnly={setJanAushadhiOnly}
+              onExecuteSearch={handleExecuteSearch}
+              onAddToSandbox={handleAddToSandbox}
+              onLocateStores={handleLocateStores}
             />
           )}
 

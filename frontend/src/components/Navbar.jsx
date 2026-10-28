@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Home,
   Pill,
   Search,
   Scale,
@@ -58,7 +59,8 @@ export default function Navbar({
   }, []);
 
   const navItems = [
-    { id: 'search', label: language === 'hi' ? 'दवाएं' : 'Medicines', icon: Search },
+    { id: 'home', label: language === 'hi' ? 'मुख्य पृष्ठ' : 'Home', icon: Home },
+    { id: 'medicines', label: language === 'hi' ? 'दवाएं' : 'Medicines', icon: Search },
     { id: 'sandbox', label: language === 'hi' ? 'तुलना' : 'Compare', icon: Scale, badge: sandboxCount },
     { id: 'kendras', label: language === 'hi' ? 'केंद्र' : 'Kendras', icon: MapPin },
     { id: 'groups', label: language === 'hi' ? 'समूह' : 'Groups', icon: Tag },
@@ -102,9 +104,9 @@ export default function Navbar({
 
       {/* Main Navbar */}
       <div className="max-w-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
-        {/* Brand Logo matching the screenshot */}
+        {/* Brand Logo */}
         <div
-          onClick={() => setActiveTab('search')}
+          onClick={() => setActiveTab('home')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -123,22 +125,8 @@ export default function Navbar({
           </span>
         </div>
 
-        {/* Centered Clean Text Navigation Links */}
+        {/* Centered Clean Text Navigation Links - HOME AND MEDICINES ARE NOW COMPLETELY SEPARATE */}
         <nav style={{ display: 'none', alignItems: 'center', gap: '1.5rem' }} className="desktop-nav">
-          <button
-            onClick={() => setActiveTab('search')}
-            style={{
-              padding: '0.4rem 0',
-              fontSize: '0.84rem',
-              fontWeight: activeTab === 'search' ? 600 : 500,
-              color: activeTab === 'search' ? 'var(--terracotta-600)' : 'var(--text-secondary)',
-              borderBottom: activeTab === 'search' ? '2px solid var(--terracotta-600)' : '2px solid transparent',
-              transition: 'all var(--transition-fast)',
-            }}
-          >
-            {language === 'hi' ? 'मुख्य पृष्ठ' : 'Home'}
-          </button>
-
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -177,7 +165,7 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Right side utilities: Status, Lang, Theme, Sign in pill */}
+        {/* Right side utilities: Status, Lang, Theme, API Docs pill button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* Language Switcher */}
           <div style={{
@@ -242,7 +230,7 @@ export default function Navbar({
             <span>API Docs</span>
           </a>
 
-          {/* Mobile menu hamburger with Lucide Icon */}
+          {/* Mobile menu hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
