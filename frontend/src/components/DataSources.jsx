@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Landmark, CheckCircle2, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function DataSources({ language }) {
@@ -31,74 +32,50 @@ export default function DataSources({ language }) {
   return (
     <section className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.5rem' }}>🏛️</span>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
-              {language === 'hi' ? 'सत्यापित सरकारी व वैधानिक डेटा स्रोत' : 'Official Statutory & Government Data Sources'}
-            </h2>
-          </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
-            Full data provenance and synchronization logs from official Indian statutory authorities.
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+            {language === 'hi' ? 'सत्यापित सरकारी व वैधानिक डेटा स्रोत' : 'Statutory & Government Data Sources'}
+          </h2>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
+            Data provenance and synchronization status from official Indian regulatory authorities.
           </p>
         </div>
 
-        <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald-600)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '0.35rem 0.85rem', borderRadius: '9999px', fontSize: '0.78rem', fontWeight: 800 }}>
-          Statutory Compliance
+        <span style={{ fontSize: '0.78rem', color: 'var(--green-700)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <CheckCircle2 size={13} />
+          <span>Statutory Compliance</span>
         </span>
       </div>
-
-      {loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="skeleton" style={{ height: '140px', borderRadius: '1rem' }} />
-          ))}
-        </div>
-      )}
-
-      {error && (
-        <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '0.75rem', color: 'var(--rose-600)', fontSize: '0.85rem' }}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
 
       {!loading && !error && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '1.25rem',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '1rem',
         }}>
           {sources.map((s) => (
             <div
               key={s.id || s.source_name}
-              className="glass-card-interactive"
+              className="clean-card"
               style={{
-                padding: '1.25rem',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                gap: '1rem',
+                gap: '0.85rem',
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--teal-600)', letterSpacing: '0.04em' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--terracotta-600)', letterSpacing: '0.04em' }}>
                     {s.source_type}
                   </span>
-                  <span style={{
-                    fontSize: '0.68rem',
-                    fontWeight: 700,
-                    padding: '0.15rem 0.45rem',
-                    borderRadius: '4px',
-                    background: s.is_fresh ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                    color: s.is_fresh ? 'var(--emerald-600)' : 'var(--amber-600)',
-                  }}>
-                    {s.is_fresh ? 'Verified Fresh' : 'Under Review'}
+                  <span className="badge badge-generic" style={{ fontSize: '0.68rem' }}>
+                    {s.is_fresh ? 'Fresh' : 'Active'}
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 0.35rem' }}>
+                <h3 style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.25rem' }}>
                   {s.source_name}
                 </h3>
 
@@ -112,10 +89,10 @@ export default function DataSources({ language }) {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 borderTop: '1px solid var(--border-subtle)',
-                paddingTop: '0.75rem',
+                paddingTop: '0.65rem',
                 fontSize: '0.75rem',
               }}>
-                <span style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
                   {s.medicine_count !== undefined ? `${s.medicine_count.toLocaleString()} Products` : 'Active'}
                 </span>
 
@@ -123,11 +100,10 @@ export default function DataSources({ language }) {
                   href={s.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-outline-teal"
-                  style={{ fontSize: '0.74rem', padding: '0.3rem 0.65rem' }}
+                  style={{ color: 'var(--terracotta-600)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem' }}
                 >
-                  <span>Official Portal</span>
-                  <span>↗</span>
+                  <span>Portal</span>
+                  <ExternalLink size={11} />
                 </a>
               </div>
             </div>

@@ -1,4 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import {
+  Bot,
+  User,
+  Send,
+  RotateCcw,
+  AlertCircle,
+  Sparkles
+} from 'lucide-react';
 import { api } from '../services/api';
 
 export default function AIChatAssistant({ language, setLanguage }) {
@@ -8,8 +16,8 @@ export default function AIChatAssistant({ language, setLanguage }) {
       sender: 'ai',
       text:
         language === 'hi'
-          ? 'नमस्ते! मैं **GenericMeds AI** सहायक हूँ। मैं आपको ब्रांडेड दवाओं के सस्ते जेनेरिक विकल्प (PMBJP जन औषधि), संरचना मिलान और मूल्य बचत समझने में मदद कर सकता हूँ। आप नीचे प्रश्न पूछ सकते हैं।'
-          : 'Namaste! I am **GenericMeds AI**. I can help you discover affordable generic medicine alternatives, compare verified MRPs with Pradhan Mantri Jan Aushadhi ceiling rates, and explain active formulations in simple terms.',
+          ? 'नमस्ते! मैं **GenericMeds AI** सहायक हूँ। मैं आपको ब्रांडेड दवाओं के सस्ते जेनेरिक विकल्प (PMBJP जन औषधि), संरचना मिलान और मूल्य बचत समझने में मदद कर सकता हूँ।'
+          : 'Namaste! I am **GenericMeds AI Assistant**. I can help you discover affordable generic medicine alternatives, compare verified MRPs with Pradhan Mantri Jan Aushadhi prices, and explain active formulations.',
       followUps: [
         'What is the generic alternative to Augmentin 625 Duo?',
         'Dolo 650 का जन औषधि में क्या विकल्प है?',
@@ -45,7 +53,6 @@ export default function AIChatAssistant({ language, setLanguage }) {
     setInput('');
     setLoading(true);
 
-    // Build conversation history for API
     const history = messages
       .filter((m) => m.id !== 'welcome')
       .map((m) => ({
@@ -73,7 +80,7 @@ export default function AIChatAssistant({ language, setLanguage }) {
       const errorMsg = {
         id: 'error-' + Date.now(),
         sender: 'ai',
-        text: `⚠️ **Error communicating with AI Assistant:** ${err.message}. Please check your connection or try again.`,
+        text: `Error communicating with AI Assistant: ${err.message}. Please try again.`,
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -98,7 +105,6 @@ export default function AIChatAssistant({ language, setLanguage }) {
     ]);
   };
 
-  // Helper to format text with medical disclaimers and bolding
   const renderFormattedText = (raw) => {
     if (!raw) return '';
     const lines = raw.split('\n');
@@ -107,7 +113,6 @@ export default function AIChatAssistant({ language, setLanguage }) {
       const trimmed = line.trim();
       if (!trimmed) return <div key={idx} style={{ height: '0.4rem' }} />;
 
-      // Notice line detection
       if (
         trimmed.toLowerCase().includes('medical notice:') ||
         trimmed.toLowerCase().includes('this tool provides medicine information') ||
@@ -117,22 +122,26 @@ export default function AIChatAssistant({ language, setLanguage }) {
           <div
             key={idx}
             style={{
-              margin: '0.65rem 0',
+              margin: '0.5rem 0',
               padding: '0.65rem 0.85rem',
               background: 'var(--disclaimer-bg)',
               border: '1px solid var(--disclaimer-border)',
-              borderRadius: '0.5rem',
+              borderRadius: '6px',
               color: 'var(--disclaimer-text)',
               fontSize: '0.78rem',
-              fontWeight: 500,
+              display: 'flex',
+              gap: '0.4rem',
+              alignItems: 'flex-start',
             }}
           >
-            <strong>⚠️ Medical Advisory:</strong> {trimmed.replace(/^(\*|•|-|\s|Medical Notice:)+/i, '')}
+            <AlertCircle size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div>
+              <strong>Medical Advisory:</strong> {trimmed.replace(/^(\*|•|-|\s|Medical Notice:)+/i, '')}
+            </div>
           </div>
         );
       }
 
-      // Replace markdown bold **text**
       const parts = line.split(/(\*\*.*?\*\*)/g);
       const isBullet = trimmed.startsWith('•') || trimmed.startsWith('-');
 
@@ -140,10 +149,10 @@ export default function AIChatAssistant({ language, setLanguage }) {
         <p
           key={idx}
           style={{
-            margin: '0.3rem 0',
+            margin: '0.25rem 0',
             fontSize: '0.86rem',
-            lineHeight: 1.6,
-            paddingLeft: isBullet ? '1rem' : '0',
+            lineHeight: 1.55,
+            paddingLeft: isBullet ? '0.75rem' : '0',
           }}
         >
           {parts.map((p, pIdx) => {
@@ -162,15 +171,15 @@ export default function AIChatAssistant({ language, setLanguage }) {
       display: 'flex',
       flexDirection: 'column',
       background: 'var(--bg-surface)',
-      borderRadius: '1.25rem',
+      borderRadius: '12px',
       border: '1px solid var(--border-subtle)',
       boxShadow: 'var(--card-shadow)',
       overflow: 'hidden',
-      maxWidth: '920px',
+      maxWidth: '860px',
       margin: '0 auto',
       width: '100%',
     }}>
-      {/* Chat Header */}
+      {/* Header */}
       <div style={{
         padding: '1rem 1.25rem',
         background: 'var(--bg-surface-elevated)',
@@ -178,59 +187,48 @@ export default function AIChatAssistant({ language, setLanguage }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, var(--teal-600) 0%, var(--teal-800) 100%)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '6px',
+            background: 'var(--terracotta-600)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.2rem',
             color: '#fff',
           }}>
-            🤖
+            <Bot size={17} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
+            <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
               GenericMeds AI Assistant
             </h3>
-            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               RAG Grounded in PMBI Jan Aushadhi & NPPA Databases
             </span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <button
-            onClick={clearChat}
-            style={{
-              padding: '0.35rem 0.65rem',
-              borderRadius: '0.45rem',
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-medium)',
-              fontSize: '0.74rem',
-              color: 'var(--text-muted)',
-              fontWeight: 600,
-            }}
-          >
-            Clear Chat
-          </button>
-        </div>
+        <button
+          onClick={clearChat}
+          className="btn-secondary"
+          style={{ padding: '0.35rem 0.65rem', fontSize: '0.74rem' }}
+        >
+          <RotateCcw size={12} />
+          <span>Clear Chat</span>
+        </button>
       </div>
 
-      {/* Messages Scroll Feed */}
+      {/* Messages */}
       <div style={{
         padding: '1.25rem',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1rem',
+        gap: '0.85rem',
         minHeight: '380px',
-        maxHeight: '520px',
+        maxHeight: '500px',
         overflowY: 'auto',
         background: 'var(--bg-surface-subtle)',
       }}>
@@ -243,52 +241,48 @@ export default function AIChatAssistant({ language, setLanguage }) {
                 display: 'flex',
                 justifyContent: isUser ? 'flex-end' : 'flex-start',
                 alignItems: 'flex-start',
-                gap: '0.6rem',
+                gap: '0.5rem',
               }}
             >
               {!isUser && (
                 <div style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                  background: 'var(--teal-600)',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '6px',
+                  background: 'var(--terracotta-600)',
                   color: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 800,
                   flexShrink: 0,
                   marginTop: '0.2rem',
                 }}>
-                  AI
+                  <Bot size={14} />
                 </div>
               )}
 
               <div style={{
                 maxWidth: '82%',
-                background: isUser ? 'var(--teal-600)' : 'var(--bg-surface)',
+                background: isUser ? 'var(--terracotta-600)' : 'var(--bg-surface)',
                 color: isUser ? '#ffffff' : 'var(--text-main)',
                 border: isUser ? 'none' : '1px solid var(--border-subtle)',
-                padding: '0.85rem 1.1rem',
-                borderRadius: isUser ? '1rem 1rem 0.2rem 1rem' : '1rem 1rem 1rem 0.2rem',
-                boxShadow: 'var(--card-shadow)',
-                fontSize: '0.88rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '8px',
+                fontSize: '0.86rem',
               }}>
                 <div>{renderFormattedText(m.text)}</div>
 
-                {/* Follow up suggestions */}
                 {m.followUps && m.followUps.length > 0 && (
                   <div style={{
-                    marginTop: '0.75rem',
-                    paddingTop: '0.65rem',
+                    marginTop: '0.65rem',
+                    paddingTop: '0.55rem',
                     borderTop: '1px solid var(--border-subtle)',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.35rem',
                   }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-dim)' }}>
-                      Suggested Inquiries:
+                    <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-dim)' }}>
+                      Suggested questions:
                     </span>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                       {m.followUps.map((q, idx) => (
@@ -297,14 +291,13 @@ export default function AIChatAssistant({ language, setLanguage }) {
                           onClick={() => handleSend(q)}
                           style={{
                             background: 'var(--bg-surface-elevated)',
-                            border: '1px solid var(--border-medium)',
-                            color: 'var(--teal-600)',
-                            padding: '0.25rem 0.65rem',
-                            borderRadius: '0.45rem',
-                            fontSize: '0.74rem',
-                            fontWeight: 600,
+                            border: '1px solid var(--border-subtle)',
+                            color: 'var(--terracotta-600)',
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '4px',
+                            fontSize: '0.72rem',
+                            fontWeight: 500,
                             textAlign: 'left',
-                            transition: 'all var(--transition-fast)',
                           }}
                         >
                           {q}
@@ -317,21 +310,19 @@ export default function AIChatAssistant({ language, setLanguage }) {
 
               {isUser && (
                 <div style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '6px',
                   background: 'var(--bg-surface-elevated)',
-                  border: '1px solid var(--border-medium)',
+                  border: '1px solid var(--border-subtle)',
                   color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
                   flexShrink: 0,
                   marginTop: '0.2rem',
                 }}>
-                  You
+                  <User size={14} />
                 </div>
               )}
             </div>
@@ -339,49 +330,23 @@ export default function AIChatAssistant({ language, setLanguage }) {
         })}
 
         {loading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{
-              width: '30px',
-              height: '30px',
-              borderRadius: '50%',
-              background: 'var(--teal-600)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '0.75rem',
-              fontWeight: 800,
-            }}>
-              AI
-            </div>
-            <div style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              padding: '0.65rem 1rem',
-              borderRadius: '0.85rem',
-              fontSize: '0.82rem',
-              color: 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}>
-              <span style={{ animation: 'spinSlow 1.5s linear infinite' }}>🔄</span>
-              <span>Retrieving verified PMBI & NPPA records...</span>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <Bot size={15} color="var(--terracotta-600)" />
+            <span>Retrieving verified PMBI records...</span>
           </div>
         )}
 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Form Bar */}
+      {/* Input */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSend();
         }}
         style={{
-          padding: '0.85rem 1.25rem',
+          padding: '0.75rem 1rem',
           background: 'var(--bg-surface)',
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
@@ -393,23 +358,19 @@ export default function AIChatAssistant({ language, setLanguage }) {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={
-            language === 'hi'
-              ? 'दवा, सॉल्ट या जेनेरिक विकल्प के बारे में पूछें...'
-              : 'Ask about any medicine, active ingredients, or PMBJP generic alternatives...'
-          }
+          placeholder="Ask about a medicine, active ingredients, or price comparison..."
           className="form-input"
-          style={{ flex: 1, padding: '0.75rem 1rem', fontSize: '0.9rem' }}
+          style={{ flex: 1, padding: '0.65rem 0.95rem' }}
         />
 
         <button
           type="submit"
           disabled={!input.trim() || loading}
           className="btn-primary"
-          style={{ padding: '0.75rem 1.25rem', fontSize: '0.88rem' }}
+          style={{ padding: '0.65rem 1.15rem' }}
         >
           <span>Send</span>
-          <span>➤</span>
+          <Send size={14} />
         </button>
       </form>
     </section>

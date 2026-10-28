@@ -1,4 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Pill,
+  Search,
+  Scale,
+  MapPin,
+  Tag,
+  FlaskConical,
+  Bot,
+  Landmark,
+  Sun,
+  Moon,
+  ExternalLink,
+  Menu,
+  X,
+  AlertCircle
+} from 'lucide-react';
 import { api } from '../services/api';
 
 export default function Navbar({
@@ -42,82 +58,87 @@ export default function Navbar({
   }, []);
 
   const navItems = [
-    { id: 'search', label: language === 'hi' ? 'दवा खोजें' : 'Medicine Search', icon: '💊' },
-    { id: 'sandbox', label: language === 'hi' ? 'मूल्य तुलना' : 'Price Sandbox', icon: '⚖️', badge: sandboxCount },
-    { id: 'kendras', label: language === 'hi' ? 'जन औषधि केंद्र' : 'Nearby Kendras', icon: '🏥' },
-    { id: 'groups', label: language === 'hi' ? '68 समूह' : '68 Groups', icon: '🏷️' },
-    { id: 'guidelines', label: language === 'hi' ? 'वितरण नियम' : 'Clinical Rules', icon: '🔬' },
-    { id: 'chat', label: language === 'hi' ? 'AI सहायक' : 'AI Assistant', icon: '🤖' },
-    { id: 'sources', label: language === 'hi' ? 'डेटा स्रोत' : 'Data Sources', icon: '🏛️' },
+    { id: 'search', label: language === 'hi' ? 'दवाएं' : 'Medicines', icon: Search },
+    { id: 'sandbox', label: language === 'hi' ? 'तुलना' : 'Compare', icon: Scale, badge: sandboxCount },
+    { id: 'kendras', label: language === 'hi' ? 'केंद्र' : 'Kendras', icon: MapPin },
+    { id: 'groups', label: language === 'hi' ? 'समूह' : 'Groups', icon: Tag },
+    { id: 'guidelines', label: language === 'hi' ? 'नियम' : 'Rules', icon: FlaskConical },
+    { id: 'chat', label: language === 'hi' ? 'सहायक' : 'Assistant', icon: Bot },
+    { id: 'sources', label: language === 'hi' ? 'डेटा स्रोत' : 'Sources', icon: Landmark },
   ];
 
   return (
-    <header style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-glass)', backdropFilter: 'blur(16px)' }}>
-      {/* Medical Safety Advisory Alert */}
-      <div className="disclaimer-banner">
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      backgroundColor: 'var(--bg-surface)',
+      borderBottom: '1px solid var(--border-subtle)',
+    }}>
+      {/* Top Advisory Strip */}
+      <div style={{
+        background: 'var(--disclaimer-bg)',
+        borderBottom: '1px solid var(--disclaimer-border)',
+        color: 'var(--disclaimer-text)',
+        fontSize: '0.74rem',
+        padding: '0.35rem 0',
+      }}>
         <div className="max-w-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.05rem' }}>⚠️</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertCircle size={14} color="var(--terracotta-600)" />
             <span>
               <strong>{language === 'hi' ? 'चिकित्सा सूचना:' : 'Medical Notice:'}</strong>{' '}
               {language === 'hi'
-                ? 'यह मंच केवल दवा जानकारी और मूल्य तुलना के लिए है, चिकित्सीय सलाह नहीं। डॉक्टर के परामर्श बिना दवा न बदलें।'
-                : 'GenericMeds AI provides verified generic alternatives and statutory price comparisons, NOT medical advice. Always consult your doctor or registered pharmacist.'}
+                ? 'यह मंच दवा जानकारी और मूल्य तुलना के लिए है, चिकित्सीय सलाह नहीं।'
+                : 'GenericMeds AI provides verified generic alternatives and PMBJP price comparisons, NOT medical advice.'}
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.75rem' }}>
-            <span>{language === 'hi' ? 'आपातकाल? कॉल करें:' : 'Emergency Hotline:'}</span>
-            <a href="tel:112" style={{ background: 'var(--amber-500)', color: '#000', padding: '0.15rem 0.5rem', borderRadius: '4px', textDecoration: 'none' }}>112 / 108</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem' }}>
+            <span>{language === 'hi' ? 'आपातकाल:' : 'Emergency:'}</span>
+            <a href="tel:112" style={{ fontWeight: 700, color: 'var(--terracotta-600)' }}>112 / 108</a>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar Bar */}
-      <div className="max-w-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', gap: '1rem' }}>
-        {/* Brand Logo */}
+      {/* Main Navbar */}
+      <div className="max-w-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
+        {/* Brand Logo matching the screenshot */}
         <div
           onClick={() => setActiveTab('search')}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', userSelect: 'none' }}
-        >
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, var(--teal-600) 0%, var(--teal-800) 100%)',
+          style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '1.4rem',
-            boxShadow: 'var(--glow-accent)',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            userSelect: 'none',
+          }}
+        >
+          <span style={{
+            fontSize: '1.25rem',
+            fontWeight: 800,
+            color: 'var(--terracotta-600)',
+            letterSpacing: '-0.02em',
           }}>
-            💊
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-                GenericMeds
-              </span>
-              <span style={{
-                background: 'linear-gradient(135deg, var(--teal-500) 0%, var(--teal-700) 100%)',
-                color: '#fff',
-                fontSize: '0.68rem',
-                fontWeight: 800,
-                padding: '0.15rem 0.45rem',
-                borderRadius: '9999px',
-                letterSpacing: '0.05em',
-              }}>
-                AI
-              </span>
-            </div>
-            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0, fontWeight: 500 }}>
-              PMBJP & NPPA Generic Discovery
-            </p>
-          </div>
+            GenericMeds<span style={{ color: 'var(--text-main)' }}>AI</span>
+          </span>
         </div>
 
-        {/* Desktop Navigation Links */}
-        <nav style={{ display: 'none', alignItems: 'center', gap: '0.35rem' }} className="desktop-nav">
+        {/* Centered Clean Text Navigation Links */}
+        <nav style={{ display: 'none', alignItems: 'center', gap: '1.5rem' }} className="desktop-nav">
+          <button
+            onClick={() => setActiveTab('search')}
+            style={{
+              padding: '0.4rem 0',
+              fontSize: '0.84rem',
+              fontWeight: activeTab === 'search' ? 600 : 500,
+              color: activeTab === 'search' ? 'var(--terracotta-600)' : 'var(--text-secondary)',
+              borderBottom: activeTab === 'search' ? '2px solid var(--terracotta-600)' : '2px solid transparent',
+              transition: 'all var(--transition-fast)',
+            }}
+          >
+            {language === 'hi' ? 'मुख्य पृष्ठ' : 'Home'}
+          </button>
+
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -128,27 +149,25 @@ export default function Navbar({
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '0.65rem',
-                  fontSize: '0.82rem',
-                  fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'var(--teal-600)' : 'var(--text-secondary)',
-                  background: isActive ? 'var(--bg-surface-elevated)' : 'transparent',
-                  border: isActive ? '1px solid var(--border-medium)' : '1px solid transparent',
+                  gap: '0.35rem',
+                  padding: '0.4rem 0',
+                  fontSize: '0.84rem',
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? 'var(--terracotta-600)' : 'var(--text-secondary)',
+                  borderBottom: isActive ? '2px solid var(--terracotta-600)' : '2px solid transparent',
                   transition: 'all var(--transition-fast)',
                 }}
               >
-                <span>{item.icon}</span>
                 <span>{item.label}</span>
                 {item.badge > 0 && (
                   <span style={{
-                    background: 'var(--teal-600)',
+                    background: 'var(--terracotta-600)',
                     color: '#fff',
-                    fontSize: '0.65rem',
-                    fontWeight: 800,
-                    padding: '0.1rem 0.4rem',
+                    fontSize: '0.62rem',
+                    fontWeight: 700,
+                    padding: '0.1rem 0.35rem',
                     borderRadius: '9999px',
+                    marginLeft: '2px',
                   }}>
                     {item.badge}
                   </span>
@@ -158,54 +177,23 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Utilities: Lang, Theme, Backend Status, Swagger */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          {/* Backend Status Pill */}
-          <div
-            title={healthStatus.online ? 'FastAPI Backend Online' : 'Connecting to FastAPI...'}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              padding: '0.3rem 0.6rem',
-              borderRadius: '9999px',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              background: healthStatus.online ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-              color: healthStatus.online ? 'var(--emerald-600)' : 'var(--rose-600)',
-              border: `1px solid ${healthStatus.online ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-            }}
-          >
-            <span style={{
-              width: '7px',
-              height: '7px',
-              borderRadius: '50%',
-              backgroundColor: healthStatus.online ? 'var(--emerald-500)' : 'var(--rose-500)',
-              display: 'inline-block',
-            }} />
-            <span style={{ display: 'none' }} className="status-text sm-inline">
-              {healthStatus.online ? 'API Live' : 'API Connecting'}
-            </span>
-          </div>
-
+        {/* Right side utilities: Status, Lang, Theme, Sign in pill */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* Language Switcher */}
           <div style={{
             display: 'flex',
-            background: 'var(--bg-surface-elevated)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: '0.5rem',
-            padding: '2px',
+            borderRadius: '6px',
+            overflow: 'hidden',
           }}>
             <button
               onClick={() => setLanguage('en')}
               style={{
-                padding: '0.25rem 0.55rem',
-                borderRadius: '0.35rem',
-                fontSize: '0.74rem',
+                padding: '0.2rem 0.45rem',
+                fontSize: '0.72rem',
                 fontWeight: 600,
-                background: language === 'en' ? 'var(--bg-surface)' : 'transparent',
-                color: language === 'en' ? 'var(--teal-600)' : 'var(--text-muted)',
-                boxShadow: language === 'en' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                background: language === 'en' ? 'var(--bg-surface-elevated)' : 'transparent',
+                color: language === 'en' ? 'var(--terracotta-600)' : 'var(--text-muted)',
               }}
             >
               EN
@@ -213,159 +201,142 @@ export default function Navbar({
             <button
               onClick={() => setLanguage('hi')}
               style={{
-                padding: '0.25rem 0.55rem',
-                borderRadius: '0.35rem',
-                fontSize: '0.74rem',
+                padding: '0.2rem 0.45rem',
+                fontSize: '0.72rem',
                 fontWeight: 600,
-                background: language === 'hi' ? 'var(--bg-surface)' : 'transparent',
-                color: language === 'hi' ? 'var(--teal-600)' : 'var(--text-muted)',
-                boxShadow: language === 'hi' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                background: language === 'hi' ? 'var(--bg-surface-elevated)' : 'transparent',
+                color: language === 'hi' ? 'var(--terracotta-600)' : 'var(--text-muted)',
               }}
             >
               हिंदी
             </button>
           </div>
 
-          {/* Theme Toggle (Dark / Light) */}
+          {/* Theme Switcher with Lucide Icon */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title="Toggle Dark / Light theme"
-            aria-label="Toggle theme"
+            title="Toggle Theme"
+            aria-label="Toggle Theme"
             style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '0.5rem',
-              background: 'var(--bg-surface-elevated)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
               border: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1rem',
-              color: 'var(--text-main)',
+              color: 'var(--text-secondary)',
             }}
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
 
-          {/* Swagger API External Link */}
+          {/* "API Docs" pill button matching "Sign in" in screenshot */}
           <a
             href="/docs"
             target="_blank"
             rel="noopener noreferrer"
-            title="Interactive Swagger OpenAPI Docs"
-            style={{
-              padding: '0.35rem 0.65rem',
-              borderRadius: '0.5rem',
-              border: '1px solid var(--border-medium)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--text-secondary)',
-              background: 'var(--bg-surface)',
-              display: 'none',
-              alignItems: 'center',
-              gap: '0.25rem',
-            }}
-            className="swagger-btn"
+            className="btn-pill-outline"
+            style={{ display: 'none' }}
           >
-            <span>Swagger</span>
-            <span>↗</span>
+            <span>API Docs</span>
           </a>
 
-          {/* Mobile Menu Hamburger */}
+          {/* Mobile menu hamburger with Lucide Icon */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '0.5rem',
-              background: 'var(--bg-surface-elevated)',
+              width: '34px',
+              height: '34px',
+              borderRadius: '8px',
               border: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.2rem',
               color: 'var(--text-main)',
             }}
             className="mobile-hamburger"
           >
-            {mobileMenuOpen ? '✕' : '☰'}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div style={{
-          padding: '0.75rem 1rem',
+          padding: '1rem',
           background: 'var(--bg-surface)',
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.35rem',
+          gap: '0.5rem',
         }}>
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                setMobileMenuOpen(false);
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.65rem 0.85rem',
-                borderRadius: '0.5rem',
-                fontSize: '0.88rem',
-                fontWeight: activeTab === item.id ? 700 : 500,
-                color: activeTab === item.id ? 'var(--teal-600)' : 'var(--text-main)',
-                background: activeTab === item.id ? 'var(--bg-surface-elevated)' : 'transparent',
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </span>
-              {item.badge > 0 && (
-                <span style={{
-                  background: 'var(--teal-600)',
-                  color: '#fff',
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  padding: '0.1rem 0.5rem',
-                  borderRadius: '9999px',
-                }}>
-                  {item.badge}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '6px',
+                  fontSize: '0.86rem',
+                  fontWeight: activeTab === item.id ? 600 : 500,
+                  color: activeTab === item.id ? 'var(--terracotta-600)' : 'var(--text-main)',
+                  background: activeTab === item.id ? 'var(--bg-surface-elevated)' : 'transparent',
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Icon size={16} color={activeTab === item.id ? 'var(--terracotta-600)' : 'var(--text-muted)'} />
+                  <span>{item.label}</span>
                 </span>
-              )}
-            </button>
-          ))}
+                {item.badge > 0 && (
+                  <span style={{
+                    background: 'var(--terracotta-600)',
+                    color: '#fff',
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    padding: '0.1rem 0.45rem',
+                    borderRadius: '9999px',
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
           <a
             href="/docs"
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              padding: '0.65rem 0.85rem',
-              fontSize: '0.85rem',
-              color: 'var(--teal-600)',
+              padding: '0.6rem 0.85rem',
+              fontSize: '0.86rem',
+              color: 'var(--terracotta-600)',
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
-            <span>Interactive Swagger API</span>
-            <span>↗</span>
+            <span>Interactive API Documentation</span>
+            <ExternalLink size={14} />
           </a>
         </div>
       )}
 
       <style>{`
-        @media (min-width: 900px) {
+        @media (min-width: 880px) {
           .desktop-nav { display: flex !important; }
           .mobile-hamburger { display: none !important; }
-          .sm-inline { display: inline !important; }
-          .swagger-btn { display: inline-flex !important; }
+          .btn-pill-outline { display: inline-flex !important; }
         }
       `}</style>
     </header>

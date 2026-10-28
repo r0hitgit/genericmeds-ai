@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Pill } from 'lucide-react';
 import Navbar from './components/Navbar';
 import MedicineSearch from './components/MedicineSearch';
 import ComparisonSandbox from './components/ComparisonSandbox';
@@ -84,20 +85,20 @@ export default function App() {
           bottom: '24px',
           right: '24px',
           zIndex: 9999,
-          background: 'var(--bg-surface-elevated)',
+          background: 'var(--bg-surface)',
           color: 'var(--text-main)',
-          border: '1px solid var(--teal-500)',
-          borderRadius: '0.75rem',
-          padding: '0.75rem 1.25rem',
+          border: '1px solid var(--terracotta-600)',
+          borderRadius: '8px',
+          padding: '0.65rem 1.15rem',
           boxShadow: 'var(--card-shadow-hover)',
-          fontSize: '0.85rem',
+          fontSize: '0.84rem',
           fontWeight: 600,
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
           animation: 'fadeInScale 0.2s ease-out',
         }}>
-          <span>💊</span>
+          <Pill size={16} color="var(--terracotta-600)" />
           <span>{toastMessage}</span>
         </div>
       )}

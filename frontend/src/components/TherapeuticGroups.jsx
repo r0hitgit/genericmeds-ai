@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Tag, Search, ArrowUpRight, Layers } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function TherapeuticGroups({ onSelectGroup, language }) {
@@ -38,77 +39,58 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
   return (
     <section className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.5rem' }}>🏷️</span>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>
-              {language === 'hi' ? '68 चिकित्सीय समूह निर्देशिका' : '68 Reconciled PMBI Therapeutic Groups'}
-            </h2>
-          </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
-            Explore complete clinical classifications across {totalProductsCount.toLocaleString()} Jan Aushadhi generic products.
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+            {language === 'hi' ? '68 चिकित्सीय समूह निर्देशिका' : '68 Reconciled PMBI Therapeutic Groups'}
+          </h2>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
+            Explore standardized classifications across {totalProductsCount.toLocaleString()} Jan Aushadhi generic products.
           </p>
         </div>
 
-        <span style={{ background: 'rgba(13, 148, 136, 0.1)', color: 'var(--teal-600)', border: '1px solid rgba(13, 148, 136, 0.25)', padding: '0.35rem 0.85rem', borderRadius: '9999px', fontSize: '0.78rem', fontWeight: 800 }}>
+        <span style={{ fontSize: '0.8rem', color: 'var(--terracotta-600)', fontWeight: 600 }}>
           {groups.length} Standardized Groups
         </span>
       </div>
 
       {/* Filter Bar */}
-      <div style={{ maxWidth: '420px', width: '100%' }}>
+      <div style={{ maxWidth: '380px', width: '100%', position: 'relative', display: 'flex', alignItems: 'center' }}>
         <input
           type="text"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="Filter classifications (e.g. Cardiovascular, Antibiotic, Vitamins)..."
+          placeholder="Filter groups (e.g. Cardiovascular, Antibiotic)..."
           className="form-input"
-          style={{ fontSize: '0.85rem', padding: '0.65rem 1rem' }}
+          style={{ paddingLeft: '2rem', fontSize: '0.82rem' }}
         />
+        <Search size={14} color="var(--text-dim)" style={{ position: 'absolute', left: '10px' }} />
       </div>
-
-      {/* Loading & Error */}
-      {loading && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="skeleton" style={{ height: '100px', borderRadius: '0.75rem' }} />
-          ))}
-        </div>
-      )}
-
-      {error && (
-        <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '0.75rem', color: 'var(--rose-600)', fontSize: '0.85rem' }}>
-          <strong>Error:</strong> {error}
-        </div>
-      )}
 
       {/* Groups Grid */}
       {!loading && !error && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '1rem',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: '0.85rem',
         }}>
           {filteredGroups.map((g) => (
             <div
               key={g.name}
               onClick={() => onSelectGroup && onSelectGroup(g.name)}
-              className="glass-card-interactive"
+              className="clean-card-interactive"
               style={{
-                padding: '1.1rem',
+                padding: '1rem 1.15rem',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                gap: '0.75rem',
+                gap: '0.65rem',
               }}
             >
-              <div>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                  {g.name}
-                </h3>
-              </div>
+              <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+                {g.name}
+              </h3>
 
               <div style={{
                 display: 'flex',
@@ -116,14 +98,15 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
                 justifyContent: 'space-between',
                 fontSize: '0.72rem',
                 borderTop: '1px solid var(--border-subtle)',
-                paddingTop: '0.5rem',
+                paddingTop: '0.45rem',
                 color: 'var(--text-muted)',
               }}>
-                <span style={{ fontWeight: 700, color: 'var(--teal-600)' }}>
+                <span style={{ fontWeight: 600, color: 'var(--terracotta-600)' }}>
                   {g.total_products} Products
                 </span>
-                <span style={{ color: 'var(--text-dim)' }}>
-                  {g.priced_products} Priced • Click to View ↗
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <span>View</span>
+                  <ArrowUpRight size={11} />
                 </span>
               </div>
             </div>
