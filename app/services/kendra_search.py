@@ -194,6 +194,27 @@ class KendraSearchService:
         total = query.count()
         kendras = query.order_by(JanAushadhiKendra.id).offset(offset).limit(limit).all()
 
+        # Smart Pan-India fallback: If exact PIN code has 0 stores, fallback to District / State
+        if total == 0 and pincode and (district or state):
+            fallback_query = db.query(JanAushadhiKendra)
+            if district and district.strip():
+                dist_clean = district.strip()
+                fallback_query = fallback_query.filter(
+                    or_(
+                        JanAushadhiKendra.district.ilike(f"%{dist_clean}%"),
+                        JanAushadhiKendra.city.ilike(f"%{dist_clean}%"),
+                    )
+                )
+            if state and state.strip():
+                st_clean = state.strip()
+                fallback_query = fallback_query.filter(JanAushadhiKendra.state.ilike(f"%{st_clean}%"))
+
+            fb_total = fallback_query.count()
+            if fb_total > 0:
+                total = fb_total
+                kendras = fallback_query.order_by(JanAushadhiKendra.id).offset(offset).limit(limit).all()
+                filters["fallback_note"] = f"No store in PIN {pincode.strip()}. Showing nearest verified stores in {district or state}."
+
         return KendraSearchResponse(
             total_found=total,
             limit=limit,

@@ -395,12 +395,52 @@ POSTAL_PREFIX_MAP = {
     "85": ("Bihar", "Bihar", "Bihar"),
 }
 
+# In-memory LRU / hash cache for pan-India PIN lookups
+_PINCODE_PAN_INDIA_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
+def fetch_india_post_official(pin: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch exact locality, district, and state from official India Post directory for all 19,000+ PIN codes.
+    """
+    try:
+        url = f"https://api.postalpincode.in/pincode/{pin}"
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (GenericMedsAI/1.0; Pan-India Pincode Directory)"}
+        )
+        with urllib.request.urlopen(req, timeout=2.5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data and isinstance(data, list) and data[0].get("Status") == "Success":
+                post_offices = data[0].get("PostOffice") or []
+                if post_offices:
+                    po = post_offices[0]
+                    # Clean up city/block name
+                    city_candidate = po.get("Block") or po.get("Name") or po.get("District")
+                    if city_candidate and city_candidate.lower() in ("na", "n/a", "null"):
+                        city_candidate = po.get("District")
+                    district_name = po.get("District") or city_candidate or ""
+                    state_name = po.get("State") or ""
+                    return {
+                        "pincode": pin,
+                        "city": city_candidate or district_name,
+                        "district": district_name,
+                        "state": state_name,
+                        "source": "india_post_official",
+                        "found": True,
+                    }
+    except Exception:
+        pass
+    return None
+
 
 def lookup_pincode(pincode: str, db: Optional[Session] = None) -> Dict[str, Any]:
     """
-    Auto-detect city, district, and state from a 6-digit Indian PIN code.
-    1. First checks local Kendra database records for exact match.
-    2. Falls back to comprehensive Postal Circle and sub-district prefix mapping.
+    Auto-detect city, district, and state from any 6-digit Indian PIN code across Pan-India.
+    1. Checks in-memory cache for instant response.
+    2. Checks verified JanAushadhiKendra database records.
+    3. Fetches live from official India Post Pan-India API.
+    4. Falls back to comprehensive Postal Circle and sub-district prefix mapping.
     """
     clean_pin = re.sub(r"\D", "", str(pincode or "")).strip()
     if not clean_pin or len(clean_pin) != 6 or not PINCODE_REGEX.match(clean_pin):
@@ -413,11 +453,15 @@ def lookup_pincode(pincode: str, db: Optional[Session] = None) -> Dict[str, Any]
             "message": "PIN code must be a 6-digit number starting with 1-9."
         }
 
-    # 1. Exact DB match from JanAushadhiKendra
+    # 1. In-memory cache hit
+    if clean_pin in _PINCODE_PAN_INDIA_CACHE:
+        return _PINCODE_PAN_INDIA_CACHE[clean_pin]
+
+    # 2. Exact DB match from JanAushadhiKendra
     if db:
         kendra = db.query(JanAushadhiKendra).filter(JanAushadhiKendra.pincode == clean_pin).first()
         if kendra:
-            return {
+            res = {
                 "pincode": clean_pin,
                 "city": kendra.city or kendra.district or "",
                 "district": kendra.district or kendra.city or "",
@@ -425,13 +469,21 @@ def lookup_pincode(pincode: str, db: Optional[Session] = None) -> Dict[str, Any]
                 "source": "verified_kendra_db",
                 "found": True
             }
+            _PINCODE_PAN_INDIA_CACHE[clean_pin] = res
+            return res
 
-    # 2. Match against prefix hierarchy (longest matching prefix first: 5, 4, 3, 2 digits)
+    # 3. Live Official India Post API (covering all Pan-India postal codes)
+    live_res = fetch_india_post_official(clean_pin)
+    if live_res:
+        _PINCODE_PAN_INDIA_CACHE[clean_pin] = live_res
+        return live_res
+
+    # 4. Fallback: match against prefix hierarchy (5, 4, 3, 2 digits)
     for length in (5, 4, 3, 2):
         prefix = clean_pin[:length]
         if prefix in POSTAL_PREFIX_MAP:
             city, district, state = POSTAL_PREFIX_MAP[prefix]
-            return {
+            fallback_res = {
                 "pincode": clean_pin,
                 "city": city,
                 "district": district,
@@ -439,6 +491,8 @@ def lookup_pincode(pincode: str, db: Optional[Session] = None) -> Dict[str, Any]
                 "source": "postal_circle_index",
                 "found": True
             }
+            _PINCODE_PAN_INDIA_CACHE[clean_pin] = fallback_res
+            return fallback_res
 
     return {
         "pincode": clean_pin,

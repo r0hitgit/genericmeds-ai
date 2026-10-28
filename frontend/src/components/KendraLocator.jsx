@@ -555,6 +555,65 @@ export default function KendraLocator({ language }) {
           })}
         </div>
       )}
+
+      {/* Empty State when no Kendras are found */}
+      {!loading && kendras.length === 0 && (
+        <div style={{
+          padding: '2.5rem 1.5rem',
+          textAlign: 'center',
+          background: 'var(--bg-surface)',
+          borderRadius: '12px',
+          border: '1px solid var(--border-subtle)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.75rem',
+          animation: 'fadeIn 0.2s ease-out',
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: 'var(--bg-surface-elevated)',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <MapPin size={22} color="var(--terracotta-600)" />
+          </div>
+
+          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+            {pincode ? `No direct Kendra store found in PIN ${pincode}` : 'No matching Jan Aushadhi Kendras found'}
+          </h4>
+
+          <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', maxWidth: '480px', margin: 0, lineHeight: 1.5 }}>
+            {pincode
+              ? `A physical government Kendra was not registered in PIN ${pincode} in this local directory. You can search by your district (${district || 'nearby city'}) or verify on the official central PMBI portal.`
+              : 'Try broadening your search criteria or resetting filters to view verified pan-India hubs.'}
+          </p>
+
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              onClick={handleResetManualSearch}
+              className="btn-secondary"
+              style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}
+            >
+              Reset & Show All Hubs
+            </button>
+            <a
+              href="https://janaushadhi.gov.in/locate-kendra"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+              style={{ fontSize: '0.8rem', padding: '0.5rem 1.15rem' }}
+            >
+              <span>Search Official PMBI Locator</span>
+              <ExternalLink size={13} />
+            </a>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

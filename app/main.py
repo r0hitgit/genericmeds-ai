@@ -87,10 +87,31 @@ if os.path.exists(static_dir):
 
     @app.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
     def serve_favicon_ico():
-        svg_path = os.path.join(static_dir, "favicon.svg")
-        if os.path.exists(svg_path):
-            return FileResponse(svg_path, media_type="image/svg+xml")
+        ico_path = os.path.join(static_dir, "favicon.ico")
+        if os.path.exists(ico_path):
+            return FileResponse(ico_path, media_type="image/x-icon")
         return JSONResponse(status_code=404, content={"detail": "Favicon not found"})
+
+    @app.api_route("/favicon-32x32.png", methods=["GET", "HEAD"], include_in_schema=False)
+    def serve_favicon_32():
+        p = os.path.join(static_dir, "favicon-32x32.png")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="image/png")
+        return JSONResponse(status_code=404, content={"detail": "Icon not found"})
+
+    @app.api_route("/favicon-16x16.png", methods=["GET", "HEAD"], include_in_schema=False)
+    def serve_favicon_16():
+        p = os.path.join(static_dir, "favicon-16x16.png")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="image/png")
+        return JSONResponse(status_code=404, content={"detail": "Icon not found"})
+
+    @app.api_route("/apple-touch-icon.png", methods=["GET", "HEAD"], include_in_schema=False)
+    def serve_apple_touch():
+        p = os.path.join(static_dir, "apple-touch-icon.png")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="image/png")
+        return JSONResponse(status_code=404, content={"detail": "Icon not found"})
 
     @app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
     def serve_frontend():

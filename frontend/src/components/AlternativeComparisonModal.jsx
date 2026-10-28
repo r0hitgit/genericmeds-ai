@@ -51,18 +51,22 @@ export default function AlternativeComparisonModal({
   if (!medicine) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 100,
-      background: 'rgba(28, 25, 23, 0.45)',
-      backdropFilter: 'blur(4px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem',
-      animation: 'fadeInScale 0.15s ease-out',
-    }}>
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1000,
+        background: 'rgba(15, 23, 42, 0.65)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+        animation: 'fadeInScale 0.15s ease-out',
+      }}
+    >
       <div style={{
         background: 'var(--bg-surface)',
         borderRadius: '14px',
