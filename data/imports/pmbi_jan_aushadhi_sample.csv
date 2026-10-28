@@ -1,0 +1,16 @@
+brand_name,generic_name,dosage_form,administration_route,release_type,pack_size,pack_unit,price_inr,price_type,manufacturer,is_jan_aushadhi,composition,prescription_status
+Jan Aushadhi Paracetamol 650,Paracetamol Tablets IP,Tablet,Oral,immediate-release,10,tablets,14.50,government_listed_price,PMBI Jan Aushadhi,True,Paracetamol 650mg,OTC
+Jan Aushadhi Paracetamol 500,Paracetamol Tablets IP,Tablet,Oral,immediate-release,10,tablets,11.00,government_listed_price,PMBI Jan Aushadhi,True,Paracetamol 500mg,OTC
+Jan Aushadhi Amoxyclav 625,Amoxicillin and Potassium Clavulanate Tablets IP,Tablet,Oral,immediate-release,10,tablets,58.00,government_listed_price,PMBI Jan Aushadhi,True,Amoxicillin 500mg + Potassium Clavulanate 125mg,Schedule H
+Jan Aushadhi Metformin 500 SR,Metformin Hydrochloride Prolonged-Release Tablets IP,Tablet,Oral,sustained-release,10,tablets,9.50,government_listed_price,PMBI Jan Aushadhi,True,Metformin 500mg,Schedule H
+Jan Aushadhi Atorvastatin 10,Atorvastatin Tablets IP,Tablet,Oral,immediate-release,10,tablets,12.00,government_listed_price,PMBI Jan Aushadhi,True,Atorvastatin 10mg,Schedule H
+Jan Aushadhi Amlodipine 5,Amlodipine Tablets IP,Tablet,Oral,immediate-release,10,tablets,6.00,government_listed_price,PMBI Jan Aushadhi,True,Amlodipine 5mg,Schedule H
+Jan Aushadhi Pantoprazole 40,Pantoprazole Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,10,tablets,18.00,government_listed_price,PMBI Jan Aushadhi,True,Pantoprazole 40mg,Schedule H
+Jan Aushadhi Azithromycin 500,Azithromycin Tablets IP,Tablet,Oral,immediate-release,3,tablets,32.00,government_listed_price,PMBI Jan Aushadhi,True,Azithromycin 500mg,Schedule H1
+Jan Aushadhi Telmisartan 40,Telmisartan Tablets IP,Tablet,Oral,immediate-release,10,tablets,13.50,government_listed_price,PMBI Jan Aushadhi,True,Telmisartan 40mg,Schedule H
+Jan Aushadhi Cetirizine 10,Cetirizine Hydrochloride Tablets IP,Tablet,Oral,immediate-release,10,tablets,4.50,government_listed_price,PMBI Jan Aushadhi,True,Cetirizine 10mg,Schedule H
+Jan Aushadhi Omeprazole 20,Omeprazole Capsules IP,Capsule,Oral,modified-release,10,capsules,12.00,government_listed_price,PMBI Jan Aushadhi,True,Omeprazole 20mg,Schedule H
+Jan Aushadhi Ciprofloxacin 500,Ciprofloxacin Tablets IP,Tablet,Oral,immediate-release,10,tablets,24.00,government_listed_price,PMBI Jan Aushadhi,True,Ciprofloxacin 500mg,Schedule H
+Jan Aushadhi Diclofenac 50,Diclofenac Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,10,tablets,5.50,government_listed_price,PMBI Jan Aushadhi,True,Diclofenac 50mg,Schedule H
+Jan Aushadhi Glimepiride 1,Glimepiride Tablets IP,Tablet,Oral,immediate-release,10,tablets,7.00,government_listed_price,PMBI Jan Aushadhi,True,Glimepiride 1mg,Schedule H
+Jan Aushadhi Montelukast Levocetirizine,Montelukast and Levocetirizine Hydrochloride Tablets,Tablet,Oral,immediate-release,10,tablets,28.00,government_listed_price,PMBI Jan Aushadhi,True,Montelukast 10mg + Levocetirizine 5mg,Schedule H

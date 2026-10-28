@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenericMeds AI | Affordable Generic Medicine Discovery for India</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Medical Safety Advisory Banner -->
+    <div class="bg-amber-500 text-slate-950 px-4 py-2.5 text-xs sm:text-sm font-medium border-b border-amber-600">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="text-base font-bold">⚠️</span>
+                <span><strong>Medical Notice:</strong> GenericMeds AI provides medicine information and price comparisons, NOT medical advice. Never change prescribed medicines without consulting your doctor or licensed pharmacist.</span>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="hidden sm:inline text-xs text-amber-950 font-semibold">Emergency? Call 112 / 108</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white font-bold text-xl shadow-teal-200 shadow-md">
+                    💊
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                        GenericMeds <span class="bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded-full font-bold">AI</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 hidden sm:block">India's Generic Medicine Discovery & PMBJP Price Comparator</p>
+                </div>
+            </div>
+
+            <!-- Main Nav Anchors -->
+            <nav class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-600">
+                <a href="#searchForm" class="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-teal-700 transition">💊 Search Medicines</a>
+                <a href="#kendraFinderSection" class="px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition">🏥 Nearby Kendras</a>
+                <a href="#chatSection" class="px-3 py-1.5 rounded-lg hover:bg-slate-100 hover:text-teal-700 transition">🤖 AI Assistant</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <!-- Language Toggle -->
+                <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs font-semibold">
+                    <button id="langEnBtn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded bg-white text-teal-800 shadow-sm transition">English</button>
+                    <button id="langHiBtn" onclick="setLanguage('hi')" class="px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 transition">हिंदी</button>
+                </div>
+
+                <a href="/docs" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
+                    <span>Swagger API</span>
+                    <span>↗</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 space-y-8">
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-teal-50 border border-teal-200 text-teal-800 rounded-full text-xs font-semibold">
+                <span>🏛️ Official PMBJP Jan Aushadhi & NPPA Data Integration</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                Discover Affordable Generic Medicines. <span class="text-teal-700">Save up to 80%.</span>
+            </h2>
+            <p class="text-sm sm:text-base text-slate-600">
+                Search verified branded medicines to find exact active ingredient generic alternatives under Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP).
+            </p>
+
+            <!-- Search Bar -->
+            <div class="pt-2">
+                <form id="searchForm" onsubmit="handleSearch(event)" class="relative flex items-center shadow-lg rounded-2xl overflow-hidden border-2 border-teal-600 bg-white">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search by brand (e.g. Dolo 650, Augmentin 625 Duo, Pan 40) or salt (Paracetamol)..." 
+                        class="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-sm sm:text-base outline-none text-slate-900 placeholder-slate-400 font-medium"
+                        required
+                    />
+                    <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-5 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base transition flex items-center gap-2">
+                        <span>Search</span>
+                        <span>🔍</span>
+                    </button>
+                </form>
+
+                <!-- Search Suggestions / Badges -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pt-3 text-xs text-slate-600">
+                    <span class="font-medium">Popular inquiries:</span>
+                    <button onclick="quickSearch('Dolo 650')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Dolo 650</button>
+                    <button onclick="quickSearch('Augmentin 625 Duo')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Augmentin 625 Duo</button>
+                    <button onclick="quickSearch('Glycomet 500 SR')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Glycomet 500 SR</button>
+                    <button onclick="quickSearch('Amlopres 5')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Amlopres 5</button>
+                    <button onclick="quickSearch('Pan 40')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Pan 40</button>
+                    <button onclick="quickSearch('Atorva 10')" class="px-2.5 py-1 bg-white hover:bg-slate-100 rounded-md border border-slate-200 font-medium text-teal-700">Atorva 10</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results & Alternatives Container -->
+        <section id="resultsSection" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 id="resultsTitle" class="text-lg font-bold text-slate-900">Catalogue Search Results</h3>
+                <span id="resultsCount" class="text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-semibold">0 items</span>
+            </div>
+
+            <!-- Medicines List -->
+            <div id="medicineCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+            <!-- Active Alternative Comparison Box -->
+            <div id="comparisonBox" class="hidden bg-white rounded-2xl border border-teal-200 shadow-md p-5 sm:p-6 space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div>
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span>⚖️ Verified Generic Formulation & Price Comparison</span>
+                        </h4>
+                        <p class="text-xs text-slate-500">Exact active ingredient & strength equivalence verification</p>
+                    </div>
+                    <button onclick="closeComparison()" class="text-slate-400 hover:text-slate-600 text-lg font-bold px-2 py-1">✕</button>
+                </div>
+
+                <div id="comparisonDetails" class="space-y-4"></div>
+            </div>
+        </section>
+
+        <!-- AI Chat Interface Section -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center font-bold text-slate-950">
+                        🤖
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold">GenericMeds AI Assistant</h3>
+                        <p class="text-xs text-slate-400">Grounded in verified PMBI & NPPA statutory databases</p>
+                    </div>
+                </div>
+                <span class="text-xs bg-teal-900 text-teal-300 px-2.5 py-1 rounded-full border border-teal-700">RAG Grounded</span>
+            </div>
+
+            <!-- Chat History Messages Container -->
+            <div id="chatHistory" class="p-4 sm:p-6 space-y-4 max-h-[420px] overflow-y-auto bg-slate-50/50">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">AI</div>
+                    <div class="bg-white border border-slate-200 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-xl text-sm leading-relaxed text-slate-800">
+                        <p>Namaste! I am <strong>GenericMeds AI</strong>. I can help you discover affordable generic medicine alternatives, compare verified MRPs with Pradhan Mantri Jan Aushadhi prices, and explain active formulations in simple English or Hindi.</p>
+                        <p class="mt-2 text-xs text-slate-500">Ask a question below, or try one of the quick suggestions:</p>
+                        <div class="flex flex-wrap gap-2 mt-2.5">
+                            <button onclick="askPrompt('What is the generic alternative to Augmentin 625 Duo?')" class="text-xs px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition">What is the generic for Augmentin 625 Duo?</button>
+                            <button onclick="askPrompt('Dolo 650 का जन औषधि में क्या विकल्प है?')" class="text-xs px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition">Dolo 650 का जन औषधि विकल्प?</button>
+                            <button onclick="askPrompt('What is the difference between brand and generic medicines?')" class="text-xs px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition">Brand vs Generic explained</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Box -->
+            <div class="p-3 sm:p-4 bg-white border-t border-slate-200">
+                <form id="chatForm" onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        placeholder="Ask about a medicine, active ingredients, or price comparison..." 
+                        class="flex-grow px-4 py-2.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-teal-600"
+                        required
+                    />
+                    <button type="submit" id="chatSendBtn" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-1.5 flex-shrink-0">
+                        <span>Send</span>
+                        <span>➤</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 68 Therapeutic Groups Explorer -->
+        <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span>🏷️ 68 Reconciled PMBI Therapeutic Groups (2,439 Products)</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">Explore complete basket across official clinical classifications</p>
+                </div>
+                <span id="groupsCountBadge" class="text-xs bg-teal-50 text-teal-700 px-2.5 py-1 rounded-full font-semibold border border-teal-200">68 Groups</span>
+            </div>
+            <div id="therapeuticGroupsList" class="flex flex-wrap gap-2 max-h-56 overflow-y-auto p-1 text-xs">
+                <div class="text-xs text-slate-400">Loading therapeutic classifications...</div>
+            </div>
+        </section>
+
+        <!-- Find Nearby Jan Aushadhi Kendras Section -->
+        <section id="kendraFinderSection" class="bg-white rounded-2xl border-2 border-teal-600/30 shadow-md p-5 sm:p-7 space-y-6">
+            <!-- Header & Disclaimer Banner -->
+            <div class="space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-teal-800 mb-1">
+                            <span>🏛️ Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP)</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                            <span>🏥 Find Nearby Jan Aushadhi Kendras</span>
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-500">Locate verified government generic medicine pharmacies near you with GPS or manual search</p>
+                    </div>
+                    <a href="https://janaushadhi.gov.in/locate-kendra" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-teal-300 bg-teal-50 text-teal-800 hover:bg-teal-100 text-xs font-bold transition">
+                        <span>Official PMBI Locator</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <!-- Mandatory Clinical & Inventory Disclaimer -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-950 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-amber-900">
+                        <span>⚠️ Mandatory Notice & Inventory Disclaimer:</span>
+                    </div>
+                    <p class="leading-relaxed">
+                        Kendra listings help you find nearby Jan Aushadhi stores but do not guarantee that a particular medicine is in stock. Confirm medicine availability, current prices, and opening hours directly with the Kendra. This application does not provide medical advice. Consult a qualified doctor or registered pharmacist before changing a prescribed medicine.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dual Finder Controls (GPS vs Manual) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                <!-- Method 1: GPS Browser Location -->
+                <div class="lg:col-span-5 bg-gradient-to-br from-teal-50 to-slate-50 rounded-xl border border-teal-200 p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-teal-800">Option 1: Device GPS</span>
+                            <span class="text-[11px] text-slate-500">Explicit Permission Only</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Find Closest Kendras Near Me</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Click to request browser location. Your precise coordinates are never saved to server disks or logs.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2 text-xs">
+                            <label for="kendraRadiusSelect" class="font-semibold text-slate-700">Search Radius:</label>
+                            <select id="kendraRadiusSelect" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-medium text-slate-800 outline-none focus:border-teal-600">
+                                <option value="5">5 km</option>
+                                <option value="10" selected>10 km (Recommended)</option>
+                                <option value="25">25 km</option>
+                                <option value="50">50 km</option>
+                            </select>
+                        </div>
+
+                        <button 
+                            id="useLocationBtn" 
+                            onclick="handleUseLocation()" 
+                            class="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-bold text-xs sm:text-sm shadow-sm transition flex items-center justify-center gap-2"
+                        >
+                            <span>📍 Use My Current Location</span>
+                        </button>
+                        <div id="gpsStatusMessage" class="text-xs text-slate-500 text-center min-h-[1.25rem]"></div>
+                    </div>
+                </div>
+
+                <!-- Method 2: Manual Search Fallback -->
+                <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Option 2: Manual Search Fallback</span>
+                            <span class="text-[11px] text-emerald-700 font-semibold">No GPS Required</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">Search by PIN Code, District, or State</h4>
+                        <p class="text-xs text-slate-500">Search across all registered stores even if location permissions are denied.</p>
+                    </div>
+
+                    <form id="manualKendraForm" onsubmit="handleManualKendraSearch(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">PIN Code (6 digits)</label>
+                                <input 
+                                    type="text" 
+                                    id="manualPincode" 
+                                    maxlength="6" 
+                                    pattern="[1-9][0-9]{5}" 
+                                    placeholder="e.g. 110029" 
+                                    class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs outline-none focus:border-teal-600 font-medium"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">State</label>
+                                <input 
+                                    type="text" 
+                                    id="manualState" 
+                                    placeholder="e.g. Delhi, Maharashtra" 
+                                    class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs outline-none focus:border-teal-600 font-medium"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">District / City</label>
+                                <input 
+                                    type="text" 
+                                    id="manualDistrict" 
+                                    placeholder="e.g. New Delhi, Mumbai" 
+                                    class="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs outline-none focus:border-teal-600 font-medium"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div id="manualSearchFeedback" class="text-xs text-red-500"></div>
+                            <button 
+                                type="submit" 
+                                class="py-2 px-5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition flex items-center gap-1.5"
+                            >
+                                <span>Search Stores</span>
+                                <span>🔍</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Kendra Results Container -->
+            <div id="kendraResultsContainer" class="space-y-4 pt-2">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <h4 id="kendraResultsHeader" class="text-sm font-bold text-slate-800">Verified Kendra Directory</h4>
+                        <span id="kendraCountBadge" class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">Showing Verified Hubs</span>
+                    </div>
+                    <button onclick="resetKendraDirectory()" class="text-xs text-teal-700 hover:underline font-medium">Show All Hubs</button>
+                </div>
+
+                <div id="kendrasList" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 animate-pulse text-center text-slate-500">
+                        Loading verified Jan Aushadhi Kendras...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clinical Molecule & Dispensing Rules Reference -->
+        <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span>🔬 Molecule Price Discovery & Safe Dispensing Rules</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">Authoritative Schedule H/H1, Cold-Chain and Narrow Therapeutic Index guidelines</p>
+                </div>
+                <span class="text-xs bg-blue-50 text-blue-800 px-2.5 py-1 rounded-full font-semibold border border-blue-200">15 Molecule References</span>
+            </div>
+            <div id="guidelinesList" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 animate-pulse">Loading clinical dispensing rules...</div>
+            </div>
+        </section>
+
+        <!-- Official Data Sources Section -->
+        <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <span>🏛️ Official Statutory & Government Sources</span>
+                </h3>
+                <span class="text-xs text-slate-500 font-medium">Statutory Compliance</span>
+            </div>
+            <div id="sourcesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <!-- Loaded dynamically -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 animate-pulse">Loading sources...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 space-y-4 text-center sm:text-left sm:flex sm:items-center sm:justify-between">
+            <div class="space-y-1">
+                <div class="font-bold text-white text-sm">GenericMeds AI (India)</div>
+                <p>Public service healthcare accessibility tool. Built with FastAPI, SQLite/PostgreSQL & Google Gemini.</p>
+            </div>
+            <div class="text-xs text-slate-500 max-w-md">
+                Disclaimer: Product prices and availability must be verified with the relevant pharmacy or official Jan Aushadhi Kendra. Not a substitute for clinical advice.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Client-side Logic Script -->
+    <script>
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const enBtn = document.getElementById('langEnBtn');
+            const hiBtn = document.getElementById('langHiBtn');
+            if (lang === 'hi') {
+                hiBtn.className = "px-2.5 py-1 rounded bg-white text-teal-800 shadow-sm transition";
+                enBtn.className = "px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 transition";
+                document.getElementById('searchInput').placeholder = "दवा का नाम खोजें (उदा. Dolo 650, Augmentin 625 Duo, Pan 40)...";
+                document.getElementById('chatInput').placeholder = "दवा या जेनेरिक विकल्प के बारे में पूछें...";
+            } else {
+                enBtn.className = "px-2.5 py-1 rounded bg-white text-teal-800 shadow-sm transition";
+                hiBtn.className = "px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 transition";
+                document.getElementById('searchInput').placeholder = "Search by brand (e.g. Dolo 650, Augmentin 625 Duo, Pan 40) or salt (Paracetamol)...";
+                document.getElementById('chatInput').placeholder = "Ask about a medicine, active ingredients, or price comparison...";
+            }
+        }
+
+        async function loadSources() {
+            try {
+                const res = await fetch('/api/v1/sources');
+                const data = await res.json();
+                const container = document.getElementById('sourcesList');
+                container.innerHTML = '';
+                data.forEach(s => {
+                    container.innerHTML += `
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <div class="font-bold text-slate-800 mb-1">${s.source_name}</div>
+                                <div class="text-[11px] text-slate-500 mb-2 truncate">${s.source_type}</div>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-200/60">
+                                <span class="text-teal-700 font-semibold">${s.medicine_count} products</span>
+                                <a href="${s.source_url}" target="_blank" class="text-slate-600 hover:text-teal-700 font-medium">Link ↗</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Failed to load sources", err);
+            }
+        }
+
+        function quickSearch(term) {
+            document.getElementById('searchInput').value = term;
+            handleSearch(new Event('submit'));
+        }
+
+        async function handleSearch(e) {
+            if (e) e.preventDefault();
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q) return;
+
+            const resultsSection = document.getElementById('resultsSection');
+            const cardsContainer = document.getElementById('medicineCards');
+            const countBadge = document.getElementById('resultsCount');
+
+            resultsSection.classList.remove('hidden');
+            cardsContainer.innerHTML = '<div class="col-span-full py-6 text-center text-slate-500">Searching verified database...</div>';
+
+            try {
+                const res = await fetch(`/api/v1/medicines/search?q=${encodeURIComponent(q)}&limit=10`);
+                const data = await res.json();
+
+                countBadge.innerText = `${data.total} items`;
+                cardsContainer.innerHTML = '';
+
+                if (data.items.length === 0) {
+                    cardsContainer.innerHTML = `
+                        <div class="col-span-full py-8 text-center bg-white rounded-xl border border-slate-200">
+                            <p class="text-slate-600 font-medium">No verified medicines found matching "${q}".</p>
+                            <p class="text-xs text-slate-400 mt-1">Please verify the brand name or active salt spelling.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                data.items.forEach(med => {
+                    const price = med.latest_price ? `₹${med.latest_price.amount_inr}` : "Price unverified";
+                    const unitPrice = med.latest_price ? `(₹${med.latest_price.unit_price_inr} / ${med.pack_unit.replace(/s$/, '')})` : "";
+                    const badge = med.is_jan_aushadhi 
+                        ? `<span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-green-200">PMBJP Jan Aushadhi</span>`
+                        : `<span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-200">Branded MRP</span>`;
+
+                    const ingredientsList = med.ingredients.map(i => `${i.name} (${i.strength_value}${i.strength_unit})`).join(', ');
+
+                    cardsContainer.innerHTML += `
+                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow transition flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h4 class="font-bold text-slate-900 text-base">${med.brand_name}</h4>
+                                    ${badge}
+                                </div>
+                                <div class="text-xs text-slate-500 mt-0.5 font-medium">${med.dosage_form} • ${med.pack_size} ${med.pack_unit} • ${med.release_type}</div>
+                                <div class="text-xs text-slate-700 mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                    <strong>Active Composition:</strong> ${ingredientsList}
+                                </div>
+                                ${med.manufacturer_name ? `<div class="text-[11px] text-slate-400 mt-1">Mfr: ${med.manufacturer_name}</div>` : ''}
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <div class="text-base font-extrabold text-slate-900">${price} <span class="text-xs font-normal text-slate-500">${unitPrice}</span></div>
+                                    <div class="text-[10px] text-slate-400">${med.latest_price ? med.latest_price.price_type : ''}</div>
+                                </div>
+                                <button onclick="findAlternatives(${med.id})" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                                    Compare Alternatives ↗
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                cardsContainer.innerHTML = `<div class="col-span-full text-red-500 text-center py-4">Error loading records: ${err.message}</div>`;
+            }
+        }
+
+        async function findAlternatives(medId) {
+            const compBox = document.getElementById('comparisonBox');
+            const details = document.getElementById('comparisonDetails');
+            compBox.classList.remove('hidden');
+            details.innerHTML = '<div class="py-4 text-center text-slate-500">Verifying formulations & computing savings...</div>';
+            compBox.scrollIntoView({ behavior: 'smooth' });
+
+            try {
+                const res = await fetch('/api/v1/alternatives/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ medicine_id: medId })
+                });
+                const data = await res.json();
+
+                const refName = data.reference_product ? data.reference_product.brand_name : 'Selected Product';
+
+                if (data.candidates.length === 0) {
+                    details.innerHTML = `
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-xs">
+                            No verified alternative formulation found for <strong>${escapeHtml(refName)}</strong> in the current catalogue.
+                            Check with a registered pharmacist.
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `
+                    <div class="text-xs text-slate-600 mb-2">
+                        Comparing verified alternatives for baseline: <strong>${escapeHtml(refName)}</strong>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-2.5">Product</th>
+                                    <th class="p-2.5">Composition & Strength</th>
+                                    <th class="p-2.5">Match Classification</th>
+                                    <th class="p-2.5">Pack / Price</th>
+                                    <th class="p-2.5">Unit Price</th>
+                                    <th class="p-2.5">Potential Savings</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                `;
+
+                data.candidates.forEach(cand => {
+                    const prod = cand.product;
+                    const isExact = cand.match_classification === 'EXACT_COMPOSITION_MATCH';
+                    const classBadge = isExact 
+                        ? `<span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">Exact Match</span>`
+                        : `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">${cand.match_classification}</span>`;
+
+                    const savingsText = cand.savings_percentage 
+                        ? `<span class="text-green-700 font-extrabold">Save ${cand.savings_percentage}% (₹${cand.unit_savings_inr}/unit)</span>`
+                        : `<span class="text-slate-400">N/A</span>`;
+
+                    const compList = prod.ingredients.map(i => `${i.name} ${i.strength_value}${i.strength_unit}`).join(', ');
+
+                    html += `
+                        <tr class="${isExact ? 'bg-teal-50/30' : ''}">
+                            <td class="p-2.5 font-bold text-slate-900">
+                                ${prod.brand_name}
+                                ${prod.is_jan_aushadhi ? '<span class="text-[10px] bg-green-200 text-green-900 px-1.5 py-0.2 rounded ml-1 font-semibold">Jan Aushadhi</span>' : ''}
+                            </td>
+                            <td class="p-2.5 text-slate-600">${compList} (${prod.dosage_form})</td>
+                            <td class="p-2.5">${classBadge}</td>
+                            <td class="p-2.5 font-semibold text-slate-900">${prod.latest_price ? '₹' + prod.latest_price.amount_inr : 'Unverified'} (${prod.pack_size} ${prod.pack_unit})</td>
+                            <td class="p-2.5 font-bold text-slate-900">${cand.alternative_unit_price ? '₹' + cand.alternative_unit_price : 'N/A'}</td>
+                            <td class="p-2.5">${savingsText}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-[11px] text-slate-500 mt-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <strong>Clinical Caution:</strong> ${data.safety_notice}
+                    </div>
+                `;
+
+                details.innerHTML = html;
+            } catch (err) {
+                details.innerHTML = `<div class="text-red-500 py-4">Failed to fetch alternatives: ${err.message}</div>`;
+            }
+        }
+
+        function closeComparison() {
+            document.getElementById('comparisonBox').classList.add('hidden');
+        }
+
+        function askPrompt(text) {
+            document.getElementById('chatInput').value = text;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        async function handleChatSubmit(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const chatHistory = document.getElementById('chatHistory');
+            const sendBtn = document.getElementById('chatSendBtn');
+
+            // Append User message
+            chatHistory.innerHTML += `
+                <div class="flex items-start gap-3 justify-end">
+                    <div class="bg-teal-600 text-white p-3.5 rounded-2xl rounded-tr-none shadow-sm max-w-xl text-sm leading-relaxed font-medium">
+                        ${escapeHtml(msg)}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">You</div>
+                </div>
+            `;
+            input.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Loading placeholder
+            const loadingId = 'loading-' + Date.now();
+            chatHistory.innerHTML += `
+                <div id="${loadingId}" class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">AI</div>
+                    <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm text-slate-400">
+                        Thinking and retrieving verified medicine records...
+                    </div>
+                </div>
+            `;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/v1/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: msg,
+                        language: currentLang
+                    })
+                });
+                const data = await res.json();
+                document.getElementById(loadingId).remove();
+
+                const formattedAnswer = renderCleanChatHtml(data.answer);
+
+                chatHistory.innerHTML += `
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">AI</div>
+                        <div class="bg-white border border-slate-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-xl text-sm leading-relaxed text-slate-800 space-y-3">
+                            <div>${formattedAnswer}</div>
+                            ${data.follow_up_questions && data.follow_up_questions.length > 0 ? `
+                                <div class="pt-2 border-t border-slate-100">
+                                    <div class="text-[11px] font-bold text-slate-500 mb-1">Suggested Follow-ups:</div>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        ${data.follow_up_questions.map(q => `
+                                            <button onclick="askPrompt('${escapeHtml(q)}')" class="text-xs px-2 py-0.5 bg-slate-100 hover:bg-slate-200 rounded text-teal-800 transition">${escapeHtml(q)}</button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chatHistory.innerHTML += `
+                    <div class="text-xs text-red-500 text-center py-2">
+                        Failed to get AI response: ${err.message}
+                    </div>
+                `;
+            } finally {
+                sendBtn.disabled = false;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function renderCleanChatHtml(rawText) {
+            if (!rawText) return '';
+
+            // 1. Clean @ symbol used in pricing expressions (e.g., "@ ₹11.0" -> "for ₹11.0")
+            let text = rawText
+                .replace(/@\s*(₹|INR|\$)/gi, 'for $1')
+                .replace(/\s+@\s+/g, ' for ');
+
+            // 2. Split lines for structured rendering
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (!line) {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    continue;
+                }
+
+                // Check if line is the Medical Disclaimer / Notice
+                if (
+                    line.toLowerCase().includes('this tool provides medicine information') ||
+                    line.toLowerCase().includes('medical notice:') ||
+                    line.toLowerCase().includes('चिकित्सकीय परामर्श:')
+                ) {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    const cleanDisclaimer = line.replace(/^\*+|\*+$/g, '').replace(/^[•\-]\s*/, '').replace(/^Medical Notice:\s*/i, '').trim();
+                    html += `
+                        <div class="mt-3 p-3 bg-amber-50 border border-amber-200/80 rounded-xl text-xs text-amber-950 font-medium leading-relaxed">
+                            <span class="font-bold text-amber-900 block mb-0.5">⚠️ Medical Notice:</span>
+                            ${escapeHtml(cleanDisclaimer)}
+                        </div>
+                    `;
+                    continue;
+                }
+
+                // Clean markdown bold **text** -> <strong>text</strong>, then strip any leftover asterisks
+                let processedLine = escapeHtml(line);
+                processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+                processedLine = processedLine.replace(/\*/g, '');
+
+                // Check if this is a section header (e.g., ends with ':' and is not a bullet item)
+                const isHeader = (line.endsWith(':') && !line.startsWith('•') && !line.startsWith('-') && line.length < 80);
+
+                if (isHeader) {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    html += `<div class="font-bold text-slate-900 text-xs sm:text-sm mt-3 mb-1">${processedLine}</div>`;
+                } else if (line.startsWith('•') || line.startsWith('-')) {
+                    if (!inList) {
+                        html += '<ul class="space-y-1.5 my-1.5">';
+                        inList = true;
+                    }
+                    const bulletText = processedLine.replace(/^[•\-]\s*/, '');
+                    html += `
+                        <li class="flex items-start gap-2 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            <span class="text-teal-600 font-bold flex-shrink-0">•</span>
+                            <span>${bulletText}</span>
+                        </li>
+                    `;
+                } else {
+                    if (inList) { html += '</ul>'; inList = false; }
+                    html += `<p class="text-xs sm:text-sm text-slate-800 leading-relaxed">${processedLine}</p>`;
+                }
+            }
+
+            if (inList) {
+                html += '</ul>';
+            }
+
+            return html;
+        }
+
+        async function loadGroups() {
+            try {
+                const res = await fetch('/api/v1/kendras/groups');
+                const data = await res.json();
+                const container = document.getElementById('therapeuticGroupsList');
+                container.innerHTML = '';
+                data.forEach(g => {
+                    const btn = document.createElement('button');
+                    btn.className = "px-2.5 py-1 bg-slate-50 hover:bg-teal-50 hover:text-teal-900 border border-slate-200 rounded-lg text-slate-700 transition flex items-center gap-1.5";
+                    btn.innerHTML = `<span class="font-medium">${escapeHtml(g.name)}</span> <span class="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.2 rounded-full font-bold">${g.total_products}</span>`;
+                    btn.onclick = () => {
+                        document.getElementById('searchInput').value = g.name;
+                        handleSearch(new Event('submit'));
+                    };
+                    container.appendChild(btn);
+                });
+            } catch (err) {
+                console.error("Failed to load therapeutic groups", err);
+            }
+        }
+
+        let lastUserLat = null;
+        let lastUserLon = null;
+
+        async function loadKendras(queryUrl = '/api/v1/kendras?limit=20', title = 'Verified Kendra Directory', badge = 'Showing Verified Hubs') {
+            const container = document.getElementById('kendrasList');
+            const header = document.getElementById('kendraResultsHeader');
+            const countBadge = document.getElementById('kendraCountBadge');
+            
+            header.innerText = title;
+            countBadge.innerText = badge;
+            container.innerHTML = '<div class="col-span-full py-6 text-center text-slate-500">Retrieving verified Kendra records...</div>';
+
+            try {
+                const res = await fetch(queryUrl);
+                const data = await res.json();
+                const list = Array.isArray(data) ? data : (data.kendras || []);
+
+                renderKendraList(list, data);
+            } catch (err) {
+                container.innerHTML = `<div class="col-span-full text-red-500 text-center py-4">Error loading Kendras: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        function renderKendraList(list, metadata = {}) {
+            const container = document.getElementById('kendrasList');
+            const countBadge = document.getElementById('kendraCountBadge');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                const radius = metadata.radius_km || document.getElementById('kendraRadiusSelect').value;
+                const wider = metadata.wider_radius_suggested || (parseInt(radius) < 50 ? parseInt(radius) * 2 : null);
+
+                container.innerHTML = `
+                    <div class="col-span-full py-8 px-4 text-center bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="text-3xl">🔍</div>
+                        <h5 class="text-sm font-bold text-slate-800">No verified Jan Aushadhi Kendras found in this area.</h5>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto">
+                            No store was detected within ${radius} km radius of your selected location in our verified directory.
+                        </p>
+                        <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+                            ${wider ? `
+                                <button onclick="handleWiderSearch(${wider})" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                                    Widen Search to ${wider} km ↗
+                                </button>
+                            ` : ''}
+                            <a href="https://janaushadhi.gov.in/locate-kendra" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold transition inline-flex items-center gap-1">
+                                <span>Official PMBI Kendra Locator</span>
+                                <span>↗</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                countBadge.innerText = '0 Stores Found';
+                return;
+            }
+
+            countBadge.innerText = `${list.length} Stores Available`;
+
+            list.forEach(k => {
+                const distanceBadge = k.distance_km !== null && k.distance_km !== undefined
+                    ? `<span class="bg-teal-100 text-teal-900 px-2 py-0.5 rounded text-[10px] font-black tracking-tight flex items-center gap-1">
+                         <span>📍</span> <span>${k.distance_km} km away</span>
+                       </span>`
+                    : (k.is_distance_approximate ? `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px]">Distance approximate</span>` : '');
+
+                const verifiedDate = k.last_verified_at ? new Date(k.last_verified_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Verified';
+
+                container.innerHTML += `
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow transition flex flex-col justify-between space-y-3.5">
+                        <div class="space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-[10px] font-black uppercase tracking-wider text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                                            ${escapeHtml(k.official_kendra_code || k.kendra_code || 'PMBJP')}
+                                        </span>
+                                        ${k.is_24x7 ? `<span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">24x7 Open</span>` : ''}
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-sm mt-1">${escapeHtml(k.kendra_name || k.hospital_name)}</h4>
+                                </div>
+                                ${distanceBadge}
+                            </div>
+
+                            <div class="text-[11px] text-slate-600 space-y-0.5">
+                                <div class="flex items-start gap-1">
+                                    <span class="text-slate-400 flex-shrink-0">📍</span>
+                                    <span>${escapeHtml(k.address || k.location)}, ${escapeHtml(k.city)}, ${escapeHtml(k.state)} - <strong>${escapeHtml(k.pincode)}</strong></span>
+                                </div>
+                                ${k.opening_hours ? `
+                                    <div class="flex items-center gap-1 text-slate-500 text-[10px]">
+                                        <span class="text-slate-400">🕒</span>
+                                        <span>Hours: ${escapeHtml(k.opening_hours)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Inventory disclaimer badge -->
+                            <div class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-200 rounded text-[10px] font-semibold">
+                                <span>⚠️</span>
+                                <span>${escapeHtml(k.stock_status || 'Medicine stock not confirmed')}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Bar -->
+                        <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                            <div class="text-[10px] text-slate-400 truncate max-w-[150px]">
+                                PMBI Verified (${verifiedDate})
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${k.phone ? `
+                                    <a href="tel:${escapeHtml(k.phone)}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                                        <span>📞</span>
+                                        <span>Call</span>
+                                    </a>
+                                ` : ''}
+                                ${k.directions_url ? `
+                                    <a href="${escapeHtml(k.directions_url)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-sm">
+                                        <span>🗺️</span>
+                                        <span>Directions</span>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function handleUseLocation() {
+            const statusMsg = document.getElementById('gpsStatusMessage');
+            const locBtn = document.getElementById('useLocationBtn');
+            const radius = document.getElementById('kendraRadiusSelect').value;
+
+            if (!navigator.geolocation) {
+                statusMsg.innerHTML = '<span class="text-red-500 font-semibold">Geolocation is not supported by your browser. Please use manual search.</span>';
+                return;
+            }
+
+            locBtn.disabled = true;
+            statusMsg.innerHTML = '<span class="text-teal-700 font-medium animate-pulse">Requesting location permission from browser...</span>';
+
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    lastUserLat = pos.coords.latitude;
+                    lastUserLon = pos.coords.longitude;
+                    statusMsg.innerHTML = `<span class="text-emerald-700 font-medium">GPS location acquired. Searching verified kendras within ${radius} km...</span>`;
+
+                    const url = `/api/v1/kendras/nearby?lat=${lastUserLat}&lon=${lastUserLon}&radius_km=${radius}&limit=25`;
+                    await loadKendras(url, `Nearby Jan Aushadhi Kendras (Within ${radius} km)`, 'GPS Nearby Results');
+
+                    locBtn.disabled = false;
+                    document.getElementById('kendraFinderSection').scrollIntoView({ behavior: 'smooth' });
+                },
+                (err) => {
+                    locBtn.disabled = false;
+                    let msg = "Location permission denied. Please enter your PIN code or District below.";
+                    if (err.code === err.POSITION_UNAVAILABLE) {
+                        msg = "Location unavailable. Please use the manual search form below.";
+                    } else if (err.code === err.TIMEOUT) {
+                        msg = "Location request timed out. Please try again or use manual search.";
+                    }
+                    statusMsg.innerHTML = `<span class="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-semibold">${msg}</span>`;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+            );
+        }
+
+        function handleWiderSearch(newRadius) {
+            document.getElementById('kendraRadiusSelect').value = newRadius;
+            if (lastUserLat !== null && lastUserLon !== null) {
+                const url = `/api/v1/kendras/nearby?lat=${lastUserLat}&lon=${lastUserLon}&radius_km=${newRadius}&limit=25`;
+                loadKendras(url, `Nearby Jan Aushadhi Kendras (Within ${newRadius} km)`, 'Expanded Radius Results');
+            } else {
+                handleUseLocation();
+            }
+        }
+
+        async function handleManualKendraSearch(e) {
+            e.preventDefault();
+            const pin = document.getElementById('manualPincode').value.trim();
+            const state = document.getElementById('manualState').value.trim();
+            const dist = document.getElementById('manualDistrict').value.trim();
+            const feedback = document.getElementById('manualSearchFeedback');
+
+            feedback.innerText = '';
+
+            if (!pin && !state && !dist) {
+                feedback.innerText = 'Please enter at least a PIN code, District, or State.';
+                return;
+            }
+
+            if (pin && !/^[1-9][0-9]{5}$/.test(pin)) {
+                feedback.innerText = 'PIN code must be a 6-digit Indian postal code starting with 1-9.';
+                return;
+            }
+
+            const params = new URLSearchParams();
+            if (pin) params.append('pincode', pin);
+            if (state) params.append('state', state);
+            if (dist) params.append('district', dist);
+            params.append('limit', '25');
+
+            const title = pin ? `Jan Aushadhi Kendras in PIN ${pin}` : `Jan Aushadhi Kendras in ${dist || state}`;
+            await loadKendras(`/api/v1/kendras/search?${params.toString()}`, title, 'Manual Search Results');
+        }
+
+        function resetKendraDirectory() {
+            document.getElementById('manualPincode').value = '';
+            document.getElementById('manualState').value = '';
+            document.getElementById('manualDistrict').value = '';
+            document.getElementById('manualSearchFeedback').innerText = '';
+            document.getElementById('gpsStatusMessage').innerText = '';
+            loadKendras('/api/v1/kendras?limit=25', 'Verified Kendra Directory', 'All Major Hubs');
+        }
+
+        async function loadGuidelines() {
+            try {
+                const res = await fetch('/api/v1/kendras/guidelines');
+                const data = await res.json();
+                const container = document.getElementById('guidelinesList');
+                container.innerHTML = '';
+                data.forEach(g => {
+                    container.innerHTML += `
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="font-bold text-slate-900">${escapeHtml(g.active_ingredient)}</div>
+                                    <div class="text-[11px] text-slate-500">${escapeHtml(g.therapeutic_class)}</div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 flex-shrink-0">
+                                    ${escapeHtml(g.price_diff_pct || 'High Savings')}
+                                </span>
+                            </div>
+                            <div class="text-[11px] text-slate-700 bg-amber-50/60 border border-amber-200/60 p-2 rounded-lg">
+                                <strong>⚠️ Dispensing Rule:</strong> ${escapeHtml(g.dispensing_rule)}
+                            </div>
+                            <div class="text-[11px] text-slate-500 flex items-center justify-between">
+                                <span>Forms: ${escapeHtml(g.strengths_forms || '')}</span>
+                                ${g.reference_url ? `<a href="${g.reference_url}" target="_blank" class="text-teal-700 hover:underline">Reference ↗</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Failed to load guidelines", err);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSources();
+            loadGroups();
+            loadKendras();
+            loadGuidelines();
+        });
+    </script>
+</body>
+</html>

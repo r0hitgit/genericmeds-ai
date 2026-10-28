@@ -1,0 +1,58 @@
+brand_name,generic_name,dosage_form,administration_route,release_type,pack_size,pack_unit,price_inr,price_type,manufacturer,is_jan_aushadhi,composition,prescription_status
+Dolo 650,Paracetamol Tablets IP,Tablet,Oral,immediate-release,15,tablets,34.5,MRP,Micro Labs Ltd,False,Paracetamol 650mg,OTC
+Calpol 500,Paracetamol Tablets IP,Tablet,Oral,immediate-release,15,tablets,21.5,MRP,GlaxoSmithKline Pharmaceuticals,False,Paracetamol 500mg,OTC
+Augmentin 625 Duo,Amoxicillin and Potassium Clavulanate Tablets IP,Tablet,Oral,immediate-release,10,tablets,204.0,MRP,GlaxoSmithKline Pharmaceuticals,False,Amoxicillin 500mg + Potassium Clavulanate 125mg,Schedule H
+Glycomet 500 SR,Metformin Hydrochloride Prolonged-Release Tablets IP,Tablet,Oral,sustained-release,20,tablets,48.0,MRP,USV Private Ltd,False,Metformin 500mg,Schedule H
+Atorva 10,Atorvastatin Tablets IP,Tablet,Oral,immediate-release,15,tablets,115.0,MRP,Zydus Healthcare,False,Atorvastatin 10mg,Schedule H
+Amlopres 5,Amlodipine Tablets IP,Tablet,Oral,immediate-release,15,tablets,46.0,MRP,Cipla Ltd,False,Amlodipine 5mg,Schedule H
+Pan 40,Pantoprazole Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,15,tablets,156.0,MRP,Alkem Laboratories,False,Pantoprazole 40mg,Schedule H
+Azee 500,Azithromycin Tablets IP,Tablet,Oral,immediate-release,5,tablets,120.0,MRP,Cipla Ltd,False,Azithromycin 500mg,Schedule H1
+Telma 40,Telmisartan Tablets IP,Tablet,Oral,immediate-release,15,tablets,132.0,MRP,Glenmark Pharmaceuticals,False,Telmisartan 40mg,Schedule H
+Okacet 10,Cetirizine Hydrochloride Tablets IP,Tablet,Oral,immediate-release,10,tablets,22.0,MRP,Cipla Ltd,False,Cetirizine 10mg,Schedule H
+Omez 20,Omeprazole Capsules IP,Capsule,Oral,modified-release,20,capsules,85.0,MRP,Dr. Reddy's Laboratories,False,Omeprazole 20mg,Schedule H
+Ciplox 500,Ciprofloxacin Tablets IP,Tablet,Oral,immediate-release,10,tablets,45.0,MRP,Cipla Ltd,False,Ciprofloxacin 500mg,Schedule H
+Voveran 50 GE,Diclofenac Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,15,tablets,62.0,MRP,Novartis India,False,Diclofenac 50mg,Schedule H
+Amaryl 1mg,Glimepiride Tablets IP,Tablet,Oral,immediate-release,30,tablets,168.0,MRP,Sanofi India,False,Glimepiride 1mg,Schedule H
+Montair LC,Montelukast and Levocetirizine Hydrochloride Tablets,Tablet,Oral,immediate-release,10,tablets,195.0,MRP,Cipla Ltd,False,Montelukast 10mg + Levocetirizine 5mg,Schedule H
+Warf 5,Warfarin Tablets IP,Tablet,Oral,immediate-release,10,tablets,78.0,MRP,Cipla Ltd,False,Warfarin 5mg,Schedule H
+Tegretol CR 200,Carbamazepine Controlled-Release Tablets,Tablet,Oral,modified-release,10,tablets,42.0,MRP,Novartis India,False,Carbamazepine 200mg,Schedule H
+Human Mixtard 30/70 100IU/ml,Biphasic Isophane Insulin Injection IP,Injection,Subcutaneous,immediate-release,10,ml,185.0,MRP,Novo Nordisk,False,Insulin 100IU,Schedule H
+Folvite 5mg,Folic Acid Tablets IP,Tablet,Oral,immediate-release,15,tablets,78.5,MRP,Pfizer Ltd,False,Folic Acid 5mg,Prescription
+Folvite,Folic Acid Tablets IP,Tablet,Oral,immediate-release,15,tablets,78.5,MRP,Pfizer Ltd,False,Folic Acid 5mg,Prescription
+Folinal 5mg,Folic Acid Tablets IP,Tablet,Oral,immediate-release,30,tablets,65.0,MRP,Micro Labs Ltd,False,Folic Acid 5mg,Prescription
+Omee 20,Omeprazole Capsules IP,Capsule,Oral,modified-release,20,capsules,72.0,MRP,Alkem Laboratories,False,Omeprazole 20mg,Schedule H
+Omee,Omeprazole Capsules IP,Capsule,Oral,modified-release,20,capsules,72.0,MRP,Alkem Laboratories,False,Omeprazole 20mg,Schedule H
+Omee-D,Omeprazole and Domperidone Capsules IP,Capsule,Oral,modified-release,15,capsules,165.0,MRP,Alkem Laboratories,False,Omeprazole 20mg + Domperidone 10mg,Schedule H
+Omez-D,Omeprazole and Domperidone Capsules IP,Capsule,Oral,modified-release,15,capsules,195.0,MRP,Dr. Reddy's Laboratories,False,Omeprazole 20mg + Domperidone 10mg,Schedule H
+Shelcal 500,Calcium and Vitamin D3 Tablets IP,Tablet,Oral,immediate-release,15,tablets,144.0,MRP,Torrent Pharmaceuticals,False,Calcium 500mg + Vitamin D3 250IU,OTC
+Becosules Z,Vitamin B Complex with Zinc Capsules,Capsule,Oral,immediate-release,20,capsules,58.0,MRP,Pfizer Ltd,False,Vitamin B Complex 50mg + Vitamin C 50mg + Zinc 41.4mg,OTC
+Limcee 500,Vitamin C Chewable Tablets IP,Tablet,Oral,immediate-release,15,tablets,32.5,MRP,Abbott India,False,Vitamin C 500mg,OTC
+Celin 500,Vitamin C Chewable Tablets IP,Tablet,Oral,immediate-release,25,tablets,42.0,MRP,Koye Pharmaceuticals,False,Vitamin C 500mg,OTC
+Combiflam,Ibuprofen and Paracetamol Tablets IP,Tablet,Oral,immediate-release,20,tablets,52.0,MRP,Sanofi India,False,Ibuprofen 400mg + Paracetamol 325mg,OTC
+Meftal Spas,Dicyclomine and Mefenamic Acid Tablets IP,Tablet,Oral,immediate-release,10,tablets,54.0,MRP,Blue Cross Laboratories,False,Dicyclomine 10mg + Mefenamic Acid 250mg,Schedule H
+Allegra 120,Fexofenadine Hydrochloride Tablets IP,Tablet,Oral,immediate-release,10,tablets,198.0,MRP,Sanofi India,False,Fexofenadine 120mg,Schedule H
+Allegra 180,Fexofenadine Hydrochloride Tablets IP,Tablet,Oral,immediate-release,10,tablets,245.0,MRP,Sanofi India,False,Fexofenadine 180mg,Schedule H
+Levocet 5,Levocetirizine Hydrochloride Tablets IP,Tablet,Oral,immediate-release,10,tablets,58.0,MRP,Hetero Healthcare,False,Levocetirizine 5mg,Schedule H
+Ecosprin 75,Aspirin Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,14,tablets,6.5,MRP,USV Private Ltd,False,Aspirin 75mg,Schedule H
+Ecosprin 150,Aspirin Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,14,tablets,11.0,MRP,USV Private Ltd,False,Aspirin 150mg,Schedule H
+Aciloc 150,Ranitidine Tablets IP,Tablet,Oral,immediate-release,30,tablets,43.5,MRP,Cadila Pharmaceuticals,False,Ranitidine 150mg,Schedule H
+Rantac 150,Ranitidine Tablets IP,Tablet,Oral,immediate-release,30,tablets,44.0,MRP,J.B. Chemicals,False,Ranitidine 150mg,Schedule H
+Pan-D,Pantoprazole and Domperidone Sustained-Release Capsules,Capsule,Oral,modified-release,15,capsules,215.0,MRP,Alkem Laboratories,False,Pantoprazole 40mg + Domperidone 30mg,Schedule H
+Pantop 40,Pantoprazole Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,15,tablets,155.0,MRP,Aristo Pharmaceuticals,False,Pantoprazole 40mg,Schedule H
+Razo 20,Rabeprazole Sodium Gastro-Resistant Tablets IP,Tablet,Oral,modified-release,15,tablets,180.0,MRP,Dr. Reddy's Laboratories,False,Rabeprazole 20mg,Schedule H
+Taxim-O 200,Cefixime Tablets IP,Tablet,Oral,immediate-release,10,tablets,118.0,MRP,Alkem Laboratories,False,Cefixime 200mg,Schedule H1
+Mahacef 200,Cefixime Tablets IP,Tablet,Oral,immediate-release,10,tablets,115.0,MRP,Mankind Pharma,False,Cefixime 200mg,Schedule H1
+Moxikind-CV 625,Amoxicillin and Potassium Clavulanate Tablets IP,Tablet,Oral,immediate-release,10,tablets,168.0,MRP,Mankind Pharma,False,Amoxicillin 500mg + Potassium Clavulanate 125mg,Schedule H
+Clavam 625,Amoxicillin and Potassium Clavulanate Tablets IP,Tablet,Oral,immediate-release,10,tablets,202.0,MRP,Alkem Laboratories,False,Amoxicillin 500mg + Potassium Clavulanate 125mg,Schedule H
+Mox 500,Amoxicillin Capsules IP,Capsule,Oral,immediate-release,15,capsules,110.0,MRP,Sun Pharma,False,Amoxicillin 500mg,Schedule H
+Novamox 500,Amoxicillin Capsules IP,Capsule,Oral,immediate-release,15,capsules,108.0,MRP,Cipla Ltd,False,Amoxicillin 500mg,Schedule H
+Norflox TZ,Norfloxacin and Tinidazole Tablets,Tablet,Oral,immediate-release,10,tablets,105.0,MRP,Cipla Ltd,False,Norfloxacin 400mg + Tinidazole 600mg,Schedule H
+Azithral 500,Azithromycin Tablets IP,Tablet,Oral,immediate-release,5,tablets,130.0,MRP,Alembic Pharmaceuticals,False,Azithromycin 500mg,Schedule H1
+Evion 400,Vitamin E Capsules IP,Capsule,Oral,immediate-release,10,capsules,38.5,MRP,Procter & Gamble,False,Vitamin E 400mg,OTC
+Neurobion Forte,Vitamin B-Complex Tablets,Tablet,Oral,immediate-release,30,tablets,42.0,MRP,Procter & Gamble,False,Vitamin B Complex 50mg,OTC
+Ondem 4,Ondansetron Tablets IP,Tablet,Oral,immediate-release,10,tablets,54.0,MRP,Alkem Laboratories,False,Ondansetron 4mg,Schedule H
+Dulcolax 5mg,Bisacodyl Tablets IP,Tablet,Oral,immediate-release,10,tablets,14.0,MRP,Sanofi India,False,Bisacodyl 5mg,OTC
+Zentel 400,Albendazole Tablets IP,Tablet,Oral,immediate-release,1,tablets,9.5,MRP,GlaxoSmithKline,False,Albendazole 400mg,Schedule H
+Cilacar 10,Cilnidipine Tablets IP,Tablet,Oral,immediate-release,15,tablets,162.0,MRP,J.B. Chemicals,False,Cilnidipine 10mg,Schedule H
+Telma H,Telmisartan and Hydrochlorothiazide Tablets IP,Tablet,Oral,immediate-release,15,tablets,215.0,MRP,Glenmark Pharmaceuticals,False,Telmisartan 40mg + Hydrochlorothiazide 12.5mg,Schedule H
+Asthalin Inhaler,Salbutamol Inhaler IP,Inhaler,Inhalation,immediate-release,200,doses,165.0,MRP,Cipla Ltd,False,Salbutamol 100mcg,Schedule H
