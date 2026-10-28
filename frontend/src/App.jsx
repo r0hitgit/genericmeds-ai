@@ -13,7 +13,7 @@ import Footer from './components/Footer';
 import { api } from './services/api';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('gm_tab') || 'home');
+  const [activeTab, setActiveTab] = useState('home');
   const [language, setLanguage] = useState(() => localStorage.getItem('gm_lang') || 'en');
   const [theme, setTheme] = useState(() => localStorage.getItem('gm_theme') || 'light');
 
@@ -27,34 +27,28 @@ export default function App() {
     }
   });
 
-  // Global Preserved Search State (Stays alive across tab navigation!)
-  const [searchQuery, setSearchQuery] = useState(() => localStorage.getItem('gm_query') || '');
-  const [searchResults, setSearchResults] = useState(() => {
-    try {
-      const saved = localStorage.getItem('gm_results');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+  // In-Memory Search State: Stays alive when clicking tabs, but cleanses on page refresh!
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
-  const [janAushadhiOnly, setJanAushadhiOnly] = useState(() => {
-    return localStorage.getItem('gm_jan_only') === 'true';
-  });
+  const [janAushadhiOnly, setJanAushadhiOnly] = useState(false);
 
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Clean up any stale query/results from localStorage so refresh is always clean
+  useEffect(() => {
+    localStorage.removeItem('gm_query');
+    localStorage.removeItem('gm_results');
+    localStorage.removeItem('gm_jan_only');
+    localStorage.removeItem('gm_tab');
+  }, []);
 
   // Sync theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('gm_theme', theme);
   }, [theme]);
-
-  // Sync tab
-  useEffect(() => {
-    localStorage.setItem('gm_tab', activeTab);
-  }, [activeTab]);
 
   // Sync language
   useEffect(() => {
@@ -65,21 +59,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('gm_sandbox', JSON.stringify(sandboxItems));
   }, [sandboxItems]);
-
-  // Sync search state in localStorage to ensure it never gets lost!
-  useEffect(() => {
-    localStorage.setItem('gm_query', searchQuery);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    if (searchResults) {
-      localStorage.setItem('gm_results', JSON.stringify(searchResults));
-    }
-  }, [searchResults]);
-
-  useEffect(() => {
-    localStorage.setItem('gm_jan_only', String(janAushadhiOnly));
-  }, [janAushadhiOnly]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -102,6 +81,12 @@ export default function App() {
     } finally {
       setSearchLoading(false);
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setSearchResults(null);
+    setSearchError(null);
   };
 
   const handleAddToSandbox = (medicine) => {
@@ -183,6 +168,7 @@ export default function App() {
               searchLoading={searchLoading}
               searchError={searchError}
               onExecuteSearch={handleExecuteSearch}
+              onClearSearch={handleClearSearch}
               onAddToSandbox={handleAddToSandbox}
               onLocateStores={handleLocateStores}
               setActiveTab={setActiveTab}
@@ -200,6 +186,7 @@ export default function App() {
               janAushadhiOnly={janAushadhiOnly}
               setJanAushadhiOnly={setJanAushadhiOnly}
               onExecuteSearch={handleExecuteSearch}
+              onClearSearch={handleClearSearch}
               onAddToSandbox={handleAddToSandbox}
               onLocateStores={handleLocateStores}
             />

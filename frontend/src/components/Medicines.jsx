@@ -22,6 +22,7 @@ export default function Medicines({
   onExecuteSearch,
   onAddToSandbox,
   onLocateStores,
+  onClearSearch,
 }) {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
 
@@ -96,7 +97,10 @@ export default function Medicines({
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchQuery('');
+                  if (onClearSearch) onClearSearch();
+                }}
                 style={{
                   position: 'absolute',
                   right: '8px',
@@ -194,10 +198,30 @@ export default function Medicines({
 
       {!searchLoading && searchResults && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-              Search Results ({searchResults.total})
-            </h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+                Search Results ({searchResults.total})
+              </h3>
+              {onClearSearch && (
+                <button
+                  type="button"
+                  onClick={onClearSearch}
+                  style={{
+                    fontSize: '0.74rem',
+                    color: 'var(--terracotta-600)',
+                    fontWeight: 600,
+                    textDecoration: 'underline',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '2px 6px',
+                  }}
+                >
+                  Clear Results
+                </button>
+              )}
+            </div>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               Query: "{searchResults.query || searchQuery}"
             </span>
