@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Scale,
   CheckCircle2,
@@ -22,6 +23,16 @@ export default function AlternativeComparisonModal({
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+
+  // Prevent background scroll while modal is active
+  useEffect(() => {
+    if (medicine) {
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [medicine]);
 
   useEffect(() => {
     if (!medicine) return;
@@ -50,37 +61,42 @@ export default function AlternativeComparisonModal({
 
   if (!medicine) return null;
 
-  return (
+  return createPortal(
     <div
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       style={{
         position: 'fixed',
-        inset: 0,
-        zIndex: 1000,
-        background: 'rgba(28, 25, 23, 0.45)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 99999,
+        background: 'rgba(15, 23, 42, 0.58)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1rem',
-        animation: 'fadeIn 0.2s ease-out',
+        padding: '1.25rem',
+        animation: 'fadeIn 0.25s ease-out',
       }}
     >
       <div style={{
         background: 'var(--bg-surface)',
-        borderRadius: '16px',
+        borderRadius: '18px',
         border: '1px solid var(--border-subtle)',
         maxWidth: '880px',
         width: '100%',
         maxHeight: '88vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 10px 20px -5px rgba(0, 0, 0, 0.15)',
+        boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1)',
         overflow: 'hidden',
-        animation: 'fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        animation: 'fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
       }}>
         {/* Header */}
         <div style={{
@@ -375,6 +391,7 @@ export default function AlternativeComparisonModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
