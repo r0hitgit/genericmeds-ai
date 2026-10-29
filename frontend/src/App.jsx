@@ -232,7 +232,7 @@ export default function App() {
       </main>
 
       {/* Global Footer */}
-      <Footer language={language} />
+      <Footer language={language} onNavigate={setActiveTab} />
 
       {/* Floating AI Assistant in Bottom Right (Home & Search pages) */}
       {activeTab !== 'chat' && (
