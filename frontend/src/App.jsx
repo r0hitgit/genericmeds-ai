@@ -8,6 +8,7 @@ import KendraLocator from './components/KendraLocator';
 import TherapeuticGroups from './components/TherapeuticGroups';
 import ClinicalGuidelines from './components/ClinicalGuidelines';
 import AIChatAssistant from './components/AIChatAssistant';
+import FloatingAIAssistant from './components/FloatingAIAssistant';
 import DataSources from './components/DataSources';
 import Footer from './components/Footer';
 import { api } from './services/api';
@@ -120,12 +121,12 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Toast Notification */}
+      {/* Toast Notification (docked bottom-left so it never blocks the floating AI assistant) */}
       {toastMessage && (
         <div style={{
           position: 'fixed',
           bottom: '24px',
-          right: '24px',
+          left: '24px',
           zIndex: 9999,
           background: 'var(--bg-surface)',
           color: 'var(--text-main)',
@@ -232,6 +233,14 @@ export default function App() {
 
       {/* Global Footer */}
       <Footer language={language} />
+
+      {/* Floating AI Assistant in Bottom Right (Home & Search pages) */}
+      {activeTab !== 'chat' && (
+        <FloatingAIAssistant
+          language={language}
+          onOpenFullChat={() => setActiveTab('chat')}
+        />
+      )}
     </div>
   );
 }
