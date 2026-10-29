@@ -167,7 +167,7 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Right side utilities: Status, Lang, Theme, API Docs pill button */}
+        {/* Right side utilities: Status, Lang, Theme */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* Language Switcher */}
           <div style={{
@@ -221,16 +221,6 @@ export default function Navbar({
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
 
-          {/* "API Docs" pill button matching "Sign in" in screenshot */}
-          <a
-            href="/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-pill-outline"
-            style={{ display: 'none' }}
-          >
-            <span>API Docs</span>
-          </a>
 
           {/* Mobile menu hamburger */}
           <button
@@ -302,23 +292,7 @@ export default function Navbar({
               </button>
             );
           })}
-          <a
-            href="/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              padding: '0.6rem 0.85rem',
-              fontSize: '0.86rem',
-              color: 'var(--terracotta-600)',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>Interactive API Documentation</span>
-            <ExternalLink size={14} />
-          </a>
+
         </div>
       )}
 
@@ -326,7 +300,6 @@ export default function Navbar({
         @media (min-width: 880px) {
           .desktop-nav { display: flex !important; }
           .mobile-hamburger { display: none !important; }
-          .btn-pill-outline { display: inline-flex !important; }
         }
       `}</style>
     </header>

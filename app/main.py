@@ -21,6 +21,8 @@ async def lifespan(app: FastAPI):
     yield
 
 
+is_production = settings.ENVIRONMENT == "production" or os.environ.get("VERCEL") is not None
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
@@ -28,9 +30,9 @@ app = FastAPI(
         "GenericMeds AI: AI-powered generic medicine discovery, composition equivalence, "
         "and verified price comparison platform for India (PMBI Jan Aushadhi & NPPA Pharma Sahi Daam)."
     ),
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    docs_url=None if is_production else "/docs",
+    redoc_url=None if is_production else "/redoc",
+    openapi_url=None if is_production else "/openapi.json",
     lifespan=lifespan,
 )
 

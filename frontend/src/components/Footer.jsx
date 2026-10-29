@@ -58,9 +58,6 @@ export default function Footer({ language }) {
               <a href="https://nppaindia.nic.in" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)' }}>
                 NPPA Pharma Sahi Daam ↗
               </a>
-              <a href="/docs" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--terracotta-600)', fontWeight: 600 }}>
-                Interactive FastAPI Swagger API Docs ↗
-              </a>
             </div>
           </div>
         </div>
