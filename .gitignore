@@ -31,10 +31,9 @@ ENV/
 env/
 
 # Databases & local storage
-*.db
 *.sqlite3
-genericmeds.db
 data/scratch/
+!genericmeds.db
 
 # Environment secrets
 .env

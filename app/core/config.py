@@ -6,6 +6,19 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_DB_PATH = os.path.join(BASE_DIR, "genericmeds.db")
 
+# On Vercel / serverless runtimes, copy sqlite DB to writable /tmp partition for optimal speed and reliability
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    import shutil
+    tmp_db_path = "/tmp/genericmeds.db"
+    if not os.path.exists(tmp_db_path) and os.path.exists(DEFAULT_DB_PATH):
+        try:
+            shutil.copyfile(DEFAULT_DB_PATH, tmp_db_path)
+            DEFAULT_DB_PATH = tmp_db_path
+        except Exception:
+            pass
+    elif os.path.exists(tmp_db_path):
+        DEFAULT_DB_PATH = tmp_db_path
+
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "GenericMeds AI"

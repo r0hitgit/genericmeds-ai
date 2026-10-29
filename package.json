@@ -1,0 +1,10 @@
+{
+  "name": "genericmeds-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GenericMeds AI: Verified Generic Medicine & PMBJP Price Comparison Platform",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build"
+  }
+}
