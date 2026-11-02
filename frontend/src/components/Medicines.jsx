@@ -25,6 +25,7 @@ export default function Medicines({
   onClearSearch,
 }) {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const isHindi = language === 'hi';
 
   const popularSearches = [
     'Dolo 650',
@@ -52,10 +53,12 @@ export default function Medicines({
       {/* Header */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-          {language === 'hi' ? 'सत्यापित दवा सूची व जेनेरिक खोज' : 'Medicines & Generic Formulations'}
+          {isHindi ? 'सत्यापित दवा सूची व जेनेरिक खोज' : 'Medicines & Generic Formulations'}
         </h2>
         <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
-          Search Indian brand names to discover active salt compositions and verified Jan Aushadhi alternatives.
+          {isHindi
+            ? 'सक्रिय साल्ट संरचना व सत्यापित जन औषधि विकल्प खोजने के लिए भारतीय ब्रांड नाम खोजें।'
+            : 'Search Indian brand names to discover active salt compositions and verified Jan Aushadhi alternatives.'}
         </p>
       </div>
 
@@ -81,7 +84,7 @@ export default function Medicines({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by brand (e.g. Dolo 650, Augmentin, Pan 40) or salt (Paracetamol)..."
+              placeholder={isHindi ? 'ब्रांड नाम (उदा. Dolo 650, Augmentin) या साल्ट (Paracetamol) से खोजें...' : 'Search by brand (e.g. Dolo 650, Augmentin, Pan 40) or salt (Paracetamol)...'}
               style={{
                 width: '100%',
                 padding: '10px 14px',
@@ -129,7 +132,7 @@ export default function Medicines({
             }}
           >
             <Search size={15} />
-            <span>{searchLoading ? 'Searching...' : 'Search'}</span>
+            <span>{searchLoading ? (isHindi ? 'खोज जारी है...' : 'Searching...') : (isHindi ? 'खोजें' : 'Search')}</span>
           </button>
         </form>
 
@@ -145,11 +148,11 @@ export default function Medicines({
               }}
               style={{ accentColor: 'var(--terracotta-600)' }}
             />
-            <span>Filter PMBJP Jan Aushadhi Only</span>
+            <span>{isHindi ? 'केवल पीएमबीजेपी जन औषधि दवाएं' : 'Filter PMBJP Jan Aushadhi Only'}</span>
           </label>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            <span>Popular:</span>
+            <span>{isHindi ? 'लोकप्रिय:' : 'Popular:'}</span>
             {popularSearches.map((term) => (
               <button
                 key={term}
@@ -201,7 +204,7 @@ export default function Medicines({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                Search Results ({searchResults.total})
+                {isHindi ? `खोज परिणाम (${searchResults.total})` : `Search Results (${searchResults.total})`}
               </h3>
               {onClearSearch && (
                 <button
@@ -218,12 +221,12 @@ export default function Medicines({
                     padding: '2px 6px',
                   }}
                 >
-                  Clear Results
+                  {isHindi ? 'परिणाम हटाएं' : 'Clear Results'}
                 </button>
               )}
             </div>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Query: "{searchResults.query || searchQuery}"
+              {isHindi ? `खोज: "${searchResults.query || searchQuery}"` : `Query: "${searchResults.query || searchQuery}"`}
             </span>
           </div>
 
@@ -236,10 +239,12 @@ export default function Medicines({
               border: '1px solid var(--border-subtle)',
             }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.5rem' }}>
-                No medicines found
+                {isHindi ? 'कोई दवा नहीं मिली' : 'No medicines found'}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '440px', margin: '0 auto' }}>
-                Try searching by common brand name (e.g., Dolo 650, Augmentin) or active salt (e.g., Paracetamol).
+                {isHindi
+                  ? 'सामान्य ब्रांड नाम (उदा. Dolo 650, Augmentin) या एक्टिव साल्ट (उदा. Paracetamol) से खोजें।'
+                  : 'Try searching by common brand name (e.g., Dolo 650, Augmentin) or active salt (e.g., Paracetamol).'}
               </p>
             </div>
           ) : (
@@ -250,9 +255,11 @@ export default function Medicines({
             }}>
               {searchResults.items.map((med) => {
                 const isJanAushadhi = med.is_jan_aushadhi;
-                const price = med.latest_price ? `₹${med.latest_price.amount_inr}` : 'Price unverified';
+                const price = med.latest_price
+                  ? `₹${med.latest_price.amount_inr}`
+                  : (isHindi ? 'मूल्य अप्रमाणित' : 'Price unverified');
                 const unitPrice = med.latest_price?.unit_price_inr
-                  ? `₹${med.latest_price.unit_price_inr} / ${med.pack_unit?.replace(/s$/, '') || 'unit'}`
+                  ? `₹${med.latest_price.unit_price_inr} / ${med.pack_unit?.replace(/s$/, '') || (isHindi ? 'इकाई' : 'unit')}`
                   : '';
 
                 return (
@@ -274,7 +281,7 @@ export default function Medicines({
                           </h4>
                           {med.drug_code && (
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 500 }}>
-                              Code: {med.drug_code}
+                              {isHindi ? 'कोड' : 'Code'}: {med.drug_code}
                             </span>
                           )}
                         </div>
@@ -282,11 +289,11 @@ export default function Medicines({
                         {isJanAushadhi ? (
                           <span className="badge badge-generic">
                             <ShieldCheck size={12} />
-                            <span>PMBJP Kendra</span>
+                            <span>{isHindi ? 'जन औषधि केंद्र' : 'PMBJP Kendra'}</span>
                           </span>
                         ) : (
                           <span className="badge badge-brand">
-                            Branded MRP
+                            {isHindi ? 'ब्रांडेड एमआरपी' : 'Branded MRP'}
                           </span>
                         )}
                       </div>
@@ -305,7 +312,7 @@ export default function Medicines({
                           marginTop: '0.65rem',
                           lineHeight: 1.4,
                         }}>
-                          <strong>Active salts:</strong>{' '}
+                          <strong>{isHindi ? 'सक्रिय घटक:' : 'Active salts:'}</strong>{' '}
                           {med.ingredients.map((i) => `${i.name} (${i.strength_value} ${i.strength_unit})`).join(', ')}
                         </div>
                       )}
@@ -348,7 +355,7 @@ export default function Medicines({
                           }}
                         >
                           <Plus size={13} />
-                          <span>Sandbox</span>
+                          <span>{isHindi ? 'सैंडबॉक्स' : 'Sandbox'}</span>
                         </button>
 
                         <button
@@ -360,7 +367,7 @@ export default function Medicines({
                             borderRadius: '6px',
                           }}
                         >
-                          <span>Alternatives</span>
+                          <span>{isHindi ? 'समान विकल्प' : 'Alternatives'}</span>
                           <ArrowUpRight size={13} />
                         </button>
                       </div>

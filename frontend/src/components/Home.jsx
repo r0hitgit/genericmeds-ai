@@ -27,6 +27,7 @@ export default function Home({
   onClearSearch,
 }) {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const isHindi = language === 'hi';
 
   const popularSearches = [
     'Dolo 650',
@@ -55,7 +56,7 @@ export default function Home({
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {/* Top Tagline Pill */}
         <div className="hero-pill-badge">
-          <span>Trusted medicine. Transparent prices.</span>
+          <span>{isHindi ? 'भरोसेमंद दवाएं। पारदर्शी कीमतें।' : 'Trusted medicine. Transparent prices.'}</span>
         </div>
 
         {/* Hero Title */}
@@ -68,7 +69,7 @@ export default function Home({
           maxWidth: '750px',
           margin: 0,
         }}>
-          Affordable, verified generic medicine in India
+          {isHindi ? 'भारत में सस्ती व सत्यापित जेनेरिक दवाएं' : 'Affordable, verified generic medicine in India'}
         </h1>
 
         {/* Hero Subtitle */}
@@ -79,10 +80,12 @@ export default function Home({
           maxWidth: '680px',
           margin: 0,
         }}>
-          Find accredited Jan Aushadhi alternatives, understand active salts with AI, and get verified price comparisons across PMBJP and NPPA.
+          {isHindi
+            ? 'सत्यापित जन औषधि विकल्प खोजें, एआई से सक्रिय साल्ट समझें, और पीएमबीजेपी व एनपीपीए से प्रामाणिक मूल्य तुलना पाएं।'
+            : 'Find accredited Jan Aushadhi alternatives, understand active salts with AI, and get verified price comparisons across PMBJP and NPPA.'}
         </p>
 
-        {/* Single Search Bar (Only one bar as requested, with no city/pincode bar) */}
+        {/* Single Search Bar */}
         <form
           onSubmit={handleSubmit}
           style={{
@@ -103,7 +106,7 @@ export default function Home({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Treatment, e.g. Dolo 650, Augmentin, Pan 40"
+              placeholder={isHindi ? 'दवा या बीमारी, जैसे Dolo 650, Augmentin, Pan 40...' : 'Treatment, e.g. Dolo 650, Augmentin, Pan 40'}
               style={{
                 width: '100%',
                 padding: '11px 14px',
@@ -151,13 +154,17 @@ export default function Home({
             }}
           >
             <Search size={16} />
-            <span>{searchLoading ? 'Searching...' : 'Find medicines'}</span>
+            <span>
+              {searchLoading
+                ? (isHindi ? 'खोज जारी है...' : 'Searching...')
+                : (isHindi ? 'दवाएं खोजें' : 'Find medicines')}
+            </span>
           </button>
         </form>
 
         {/* Quick Suggestion Pills */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          <span>Popular:</span>
+          <span>{isHindi ? 'लोकप्रिय:' : 'Popular:'}</span>
           {popularSearches.map((term) => (
             <button
               key={term}
@@ -187,7 +194,7 @@ export default function Home({
         </div>
       </div>
 
-      {/* RESULTS DISPLAYED JUST BELOW THE SEARCH BAR (as explicitly requested) */}
+      {/* RESULTS DISPLAYED JUST BELOW THE SEARCH BAR */}
       {searchLoading && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
           {[1, 2, 3, 4].map((i) => (
@@ -217,7 +224,9 @@ export default function Home({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                Search Results for "{searchResults.query || searchQuery}"
+                {isHindi
+                  ? `"${searchResults.query || searchQuery}" के खोज परिणाम`
+                  : `Search Results for "${searchResults.query || searchQuery}"`}
               </h2>
               {onClearSearch && (
                 <button
@@ -234,12 +243,12 @@ export default function Home({
                     padding: '2px 6px',
                   }}
                 >
-                  Clear Results
+                  {isHindi ? 'परिणाम हटाएं' : 'Clear Results'}
                 </button>
               )}
             </div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              {searchResults.total} medicines found
+              {isHindi ? `${searchResults.total} दवाएं मिलीं` : `${searchResults.total} medicines found`}
             </span>
           </div>
 
@@ -252,10 +261,14 @@ export default function Home({
               border: '1px solid var(--border-subtle)',
             }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.5rem' }}>
-                No verified medicines found matching "{searchQuery}"
+                {isHindi
+                  ? `"${searchQuery}" से मेल खाती कोई सत्यापित दवा नहीं मिली`
+                  : `No verified medicines found matching "${searchQuery}"`}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '440px', margin: '0 auto' }}>
-                Please verify the brand name or active salt spelling (e.g., Paracetamol, Dolo 650, Augmentin).
+                {isHindi
+                  ? 'कृपया ब्रांड नाम या सक्रिय साल्ट की स्पेलिंग जांचें (जैसे Paracetamol, Dolo 650, Augmentin)।'
+                  : 'Please verify the brand name or active salt spelling (e.g., Paracetamol, Dolo 650, Augmentin).'}
               </p>
             </div>
           ) : (
@@ -266,9 +279,11 @@ export default function Home({
             }}>
               {searchResults.items.map((med) => {
                 const isJanAushadhi = med.is_jan_aushadhi;
-                const price = med.latest_price ? `₹${med.latest_price.amount_inr}` : 'Price unverified';
+                const price = med.latest_price
+                  ? `₹${med.latest_price.amount_inr}`
+                  : (isHindi ? 'मूल्य अप्रमाणित' : 'Price unverified');
                 const unitPrice = med.latest_price?.unit_price_inr
-                  ? `₹${med.latest_price.unit_price_inr} / ${med.pack_unit?.replace(/s$/, '') || 'unit'}`
+                  ? `₹${med.latest_price.unit_price_inr} / ${med.pack_unit?.replace(/s$/, '') || (isHindi ? 'इकाई' : 'unit')}`
                   : '';
 
                 return (
@@ -290,7 +305,7 @@ export default function Home({
                           </h3>
                           {med.drug_code && (
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 500 }}>
-                              Code: {med.drug_code}
+                              {isHindi ? 'कोड' : 'Code'}: {med.drug_code}
                             </span>
                           )}
                         </div>
@@ -298,11 +313,11 @@ export default function Home({
                         {isJanAushadhi ? (
                           <span className="badge badge-generic">
                             <ShieldCheck size={12} />
-                            <span>PMBJP Kendra</span>
+                            <span>{isHindi ? 'जन औषधि केंद्र' : 'PMBJP Kendra'}</span>
                           </span>
                         ) : (
                           <span className="badge badge-brand">
-                            Branded MRP
+                            {isHindi ? 'ब्रांडेड एमआरपी' : 'Branded MRP'}
                           </span>
                         )}
                       </div>
@@ -321,7 +336,7 @@ export default function Home({
                           marginTop: '0.65rem',
                           lineHeight: 1.4,
                         }}>
-                          <strong>Active salts:</strong>{' '}
+                          <strong>{isHindi ? 'सक्रिय घटक:' : 'Active salts:'}</strong>{' '}
                           {med.ingredients.map((i) => `${i.name} (${i.strength_value} ${i.strength_unit})`).join(', ')}
                         </div>
                       )}
@@ -364,7 +379,7 @@ export default function Home({
                           }}
                         >
                           <Plus size={13} />
-                          <span>Sandbox</span>
+                          <span>{isHindi ? 'सैंडबॉक्स' : 'Sandbox'}</span>
                         </button>
 
                         <button
@@ -376,7 +391,7 @@ export default function Home({
                             borderRadius: '6px',
                           }}
                         >
-                          <span>Alternatives</span>
+                          <span>{isHindi ? 'समान विकल्प' : 'Alternatives'}</span>
                           <ArrowUpRight size={13} />
                         </button>
                       </div>
@@ -401,10 +416,12 @@ export default function Home({
           style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer' }}
         >
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            Verified Jan Aushadhi
+            {isHindi ? 'सत्यापित जन औषधि' : 'Verified Jan Aushadhi'}
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-            Accreditation and active ingredient composition checked before listing.
+            {isHindi
+              ? 'दवा सूचीकरण से पूर्व प्रमाणन व सक्रिय साल्ट संरचना की आधिकारिक जांच।'
+              : 'Accreditation and active ingredient composition checked before listing.'}
           </p>
         </div>
 
@@ -414,10 +431,12 @@ export default function Home({
           style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer' }}
         >
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            All-inclusive savings
+            {isHindi ? 'किफायती व अधिकतम बचत' : 'All-inclusive savings'}
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-            Save up to 80% with standardized government ceiling prices against branded MRPs.
+            {isHindi
+              ? 'ब्रांडेड एमआरपी की तुलना में सरकारी निर्धारित मूल्यों पर 80% तक बचत करें।'
+              : 'Save up to 80% with standardized government ceiling prices against branded MRPs.'}
           </p>
         </div>
 
@@ -427,10 +446,12 @@ export default function Home({
           style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer' }}
         >
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            AI report summary
+            {isHindi ? 'एआई रिपोर्ट सारांश' : 'AI report summary'}
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-            Plain-language summary of your medicine salts, reviewed by clinical protocols.
+            {isHindi
+              ? 'नैदानिक प्रोटोकॉल आधारित, दवा के साल्ट और उपयोग का सरल भाषा में विवरण।'
+              : 'Plain-language summary of your medicine salts, reviewed by clinical protocols.'}
           </p>
         </div>
 
@@ -440,10 +461,12 @@ export default function Home({
           style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer' }}
         >
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            Nearby Kendra locator
+            {isHindi ? 'निकटतम केंद्र खोजक' : 'Nearby Kendra locator'}
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-            Locate authorized PMBJP pharmacies near you with GPS coordinates.
+            {isHindi
+              ? 'जीपीएस निर्देशांकों द्वारा अपने पास अधिकृत पीएमबीजेपी केंद्र खोजें।'
+              : 'Locate authorized PMBJP pharmacies near you with GPS coordinates.'}
           </p>
         </div>
       </div>
@@ -451,7 +474,7 @@ export default function Home({
       {/* "How it works" 4-Step Section matching screenshot */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-          How it works
+          {isHindi ? 'यह कैसे काम करता है' : 'How it works'}
         </h2>
 
         <div style={{
@@ -462,28 +485,28 @@ export default function Home({
           <div className="clean-card" style={{ padding: '1.1rem 1.25rem' }}>
             <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)', fontWeight: 600 }}>1</span>
             <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-              Search medicine
+              {isHindi ? 'दवा खोजें' : 'Search medicine'}
             </div>
           </div>
 
           <div className="clean-card" style={{ padding: '1.1rem 1.25rem' }}>
             <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)', fontWeight: 600 }}>2</span>
             <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-              Compare options
+              {isHindi ? 'विकल्पों की तुलना करें' : 'Compare options'}
             </div>
           </div>
 
           <div className="clean-card" style={{ padding: '1.1rem 1.25rem' }}>
             <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)', fontWeight: 600 }}>3</span>
             <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-              Locate store
+              {isHindi ? 'केंद्र खोजें' : 'Locate store'}
             </div>
           </div>
 
           <div className="clean-card" style={{ padding: '1.1rem 1.25rem' }}>
             <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)', fontWeight: 600 }}>4</span>
             <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.2rem' }}>
-              Save with support
+              {isHindi ? 'सस्ती दवा और बचत पाएं' : 'Save with support'}
             </div>
           </div>
         </div>
