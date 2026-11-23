@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Landmark, CheckCircle2, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function DataSources({ language }) {
+export default function DataSources({ language = 'en' }) {
   const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isHindi = language === 'hi';
 
   useEffect(() => {
     let isMounted = true;
@@ -18,7 +19,7 @@ export default function DataSources({ language }) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || 'Failed to fetch statutory sources.');
+          setError(err.message || (isHindi ? 'वैधानिक स्रोत लोड करने में विफल।' : 'Failed to fetch statutory sources.'));
           setLoading(false);
         }
       }
@@ -27,7 +28,7 @@ export default function DataSources({ language }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isHindi]);
 
   return (
     <section className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -35,16 +36,18 @@ export default function DataSources({ language }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            {language === 'hi' ? 'सत्यापित सरकारी व वैधानिक डेटा स्रोत' : 'Statutory & Government Data Sources'}
+            {isHindi ? 'सत्यापित सरकारी व वैधानिक डेटा स्रोत' : 'Statutory & Government Data Sources'}
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-            Data provenance and synchronization status from official Indian regulatory authorities.
+            {isHindi
+              ? 'आधिकारिक भारतीय विनियामक प्राधिकरणों से डेटा प्रामाणिकता एवं अद्यतन स्थिति।'
+              : 'Data provenance and synchronization status from official Indian regulatory authorities.'}
           </p>
         </div>
 
         <span style={{ fontSize: '0.78rem', color: 'var(--green-700)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
           <CheckCircle2 size={13} />
-          <span>Statutory Compliance</span>
+          <span>{isHindi ? 'वैधानिक अनुपालन' : 'Statutory Compliance'}</span>
         </span>
       </div>
 
@@ -71,7 +74,7 @@ export default function DataSources({ language }) {
                     {s.source_type}
                   </span>
                   <span className="badge badge-generic" style={{ fontSize: '0.68rem' }}>
-                    {s.is_fresh ? 'Fresh' : 'Active'}
+                    {s.is_fresh ? (isHindi ? 'नवीनतम' : 'Fresh') : (isHindi ? 'सक्रिय' : 'Active')}
                   </span>
                 </div>
 
@@ -80,7 +83,7 @@ export default function DataSources({ language }) {
                 </h3>
 
                 <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', margin: 0 }}>
-                  {s.description || 'Statutory regulatory and public pharmaceutical pricing catalogue.'}
+                  {s.description || (isHindi ? 'वैधानिक विनियामक और सार्वजनिक फार्मास्यूटिकल मूल्य सूची।' : 'Statutory regulatory and public pharmaceutical pricing catalogue.')}
                 </p>
               </div>
 
@@ -93,7 +96,7 @@ export default function DataSources({ language }) {
                 fontSize: '0.75rem',
               }}>
                 <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
-                  {s.medicine_count !== undefined ? `${s.medicine_count.toLocaleString()} Products` : 'Active'}
+                  {s.medicine_count !== undefined ? `${s.medicine_count.toLocaleString()} ${isHindi ? 'उत्पाद' : 'Products'}` : (isHindi ? 'सक्रिय' : 'Active')}
                 </span>
 
                 <a
@@ -102,7 +105,7 @@ export default function DataSources({ language }) {
                   rel="noopener noreferrer"
                   style={{ color: 'var(--terracotta-600)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem' }}
                 >
-                  <span>Portal</span>
+                  <span>{isHindi ? 'आधिकारिक पोर्टल' : 'Portal'}</span>
                   <ExternalLink size={11} />
                 </a>
               </div>

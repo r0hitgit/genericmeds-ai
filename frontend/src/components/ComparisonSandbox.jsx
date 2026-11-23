@@ -14,11 +14,12 @@ export default function ComparisonSandbox({
   onRemoveFromSandbox,
   onClearSandbox,
   onAddMedicine,
-  language,
+  language = 'en',
 }) {
   const [comparing, setComparing] = useState(false);
   const [comparisonResult, setComparisonResult] = useState(null);
   const [error, setError] = useState(null);
+  const isHindi = language === 'hi';
 
   const runComparison = async (items = sandboxItems) => {
     if (items.length < 2) {
@@ -32,7 +33,7 @@ export default function ComparisonSandbox({
       const res = await api.comparePrices(ids);
       setComparisonResult(res);
     } catch (err) {
-      setError(err.message || 'Comparison failed.');
+      setError(err.message || (isHindi ? 'तुलना करने में त्रुटि हुई।' : 'Comparison failed.'));
     } finally {
       setComparing(false);
     }
@@ -55,7 +56,7 @@ export default function ComparisonSandbox({
         res.items.slice(0, 3).forEach((m) => onAddMedicine(m));
       }
     } catch (err) {
-      setError('Could not load preset medicines: ' + err.message);
+      setError((isHindi ? 'प्रीसेट दवाएं लोड करने में विफल: ' : 'Could not load preset medicines: ') + err.message);
     } finally {
       setComparing(false);
     }
@@ -67,10 +68,12 @@ export default function ComparisonSandbox({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            {language === 'hi' ? 'दवा मूल्य तुलना सैंडबॉक्स' : 'Price Comparison Sandbox'}
+            {isHindi ? 'दवा मूल्य तुलना सैंडबॉक्स' : 'Price Comparison Sandbox'}
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-            Compare normalized per-tablet unit prices and calculate potential savings across multiple products.
+            {isHindi
+              ? 'प्रति-टैबलेट मानक इकाई मूल्यों की तुलना करें और कई दवाओं में संभावित बचत की गणना करें।'
+              : 'Compare normalized per-tablet unit prices and calculate potential savings across multiple products.'}
           </p>
         </div>
 
@@ -81,7 +84,7 @@ export default function ComparisonSandbox({
             style={{ fontSize: '0.78rem', padding: '0.4rem 0.85rem' }}
           >
             <Trash2 size={13} />
-            <span>Clear Sandbox ({sandboxItems.length})</span>
+            <span>{isHindi ? `सैंडबॉक्स खाली करें (${sandboxItems.length})` : `Clear Sandbox (${sandboxItems.length})`}</span>
           </button>
         )}
       </div>
@@ -98,7 +101,7 @@ export default function ComparisonSandbox({
         flexWrap: 'wrap',
       }}>
         <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-          Quick presets:
+          {isHindi ? 'त्वरित प्रीसेट:' : 'Quick presets:'}
         </span>
         <button
           onClick={() => loadPreset('Paracetamol')}
@@ -123,6 +126,24 @@ export default function ComparisonSandbox({
         </button>
       </div>
 
+      {/* Error alert */}
+      {error && (
+        <div style={{
+          padding: '1rem',
+          background: 'var(--disclaimer-bg)',
+          border: '1px solid var(--disclaimer-border)',
+          borderRadius: '8px',
+          color: 'var(--terracotta-700)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.82rem',
+        }}>
+          <AlertCircle size={16} />
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* Selected Items Tray */}
       {sandboxItems.length === 0 ? (
         <div style={{
@@ -133,10 +154,12 @@ export default function ComparisonSandbox({
           border: '1px dashed var(--border-medium)',
         }}>
           <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.4rem' }}>
-            Your comparison sandbox is empty
+            {isHindi ? 'आपका तुलना सैंडबॉक्स खाली है' : 'Your comparison sandbox is empty'}
           </h3>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto' }}>
-            Click "+ Sandbox" on any medicine card or choose one of the quick presets above to calculate price differences.
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '440px', margin: '0 auto' }}>
+            {isHindi
+              ? 'मूल्य अंतर और बचत देखने के लिए किसी भी दवा कार्ड पर "+ सैंडबॉक्स" क्लिक करें या ऊपर दिए गए त्वरित प्रीसेट चुनें।'
+              : 'Click "+ Sandbox" on any medicine card or choose one of the quick presets above to calculate price differences.'}
           </p>
         </div>
       ) : (
@@ -157,13 +180,16 @@ export default function ComparisonSandbox({
               >
                 <button
                   onClick={() => onRemoveFromSandbox(med.id)}
-                  title="Remove"
+                  title={isHindi ? 'हटाएं' : 'Remove'}
                   style={{
                     position: 'absolute',
                     top: '0.75rem',
                     right: '0.75rem',
                     color: 'var(--text-dim)',
                     padding: '2px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
                   }}
                 >
                   <Trash2 size={14} />
@@ -171,7 +197,7 @@ export default function ComparisonSandbox({
 
                 <div>
                   <span className={med.is_jan_aushadhi ? 'badge badge-generic' : 'badge badge-brand'}>
-                    {med.is_jan_aushadhi ? 'PMBJP Jan Aushadhi' : 'Branded MRP'}
+                    {med.is_jan_aushadhi ? (isHindi ? 'जन औषधि केंद्र' : 'PMBJP Jan Aushadhi') : (isHindi ? 'ब्रांडेड एमआरपी' : 'Branded MRP')}
                   </span>
                   <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', marginTop: '0.35rem', marginBottom: '0.15rem' }}>
                     {med.brand_name}
@@ -183,11 +209,11 @@ export default function ComparisonSandbox({
 
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.5rem' }}>
                   <span style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                    {med.latest_price ? `₹${med.latest_price.amount_inr}` : 'Unverified'}
+                    {med.latest_price ? `₹${med.latest_price.amount_inr}` : (isHindi ? 'मूल्य अप्रमाणित' : 'Unverified')}
                   </span>
                   {med.latest_price?.unit_price_inr && (
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                      ₹{med.latest_price.unit_price_inr} / unit
+                      ₹{med.latest_price.unit_price_inr} / {isHindi ? 'इकाई' : 'unit'}
                     </span>
                   )}
                 </div>
@@ -197,7 +223,9 @@ export default function ComparisonSandbox({
 
           {sandboxItems.length < 2 && (
             <div style={{ padding: '0.75rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
-              Please add at least one more medicine to compute the price difference and unit savings.
+              {isHindi
+                ? 'मूल्य अंतर और इकाई बचत की गणना करने के लिए कृपया कम से कम एक और दवा जोड़ें।'
+                : 'Please add at least one more medicine to compute the price difference and unit savings.'}
             </div>
           )}
         </div>
@@ -209,16 +237,16 @@ export default function ComparisonSandbox({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
             <div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                Unit Price & Savings Matrix
+                {isHindi ? 'इकाई मूल्य व बचत मैट्रिक्स' : 'Unit Price & Savings Matrix'}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.15rem 0 0' }}>
-                Normalized per-unit statutory comparison
+                {isHindi ? 'मानकीकृत प्रति-इकाई वैधानिक मूल्य तुलना' : 'Normalized per-unit statutory comparison'}
               </p>
             </div>
             {comparisonResult.max_savings_percentage && (
               <span className="badge badge-savings" style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
                 <TrendingDown size={14} />
-                <span>Max Savings: {comparisonResult.max_savings_percentage}%</span>
+                <span>{isHindi ? `अधिकतम बचत: ${comparisonResult.max_savings_percentage}%` : `Max Savings: ${comparisonResult.max_savings_percentage}%`}</span>
               </span>
             )}
           </div>
@@ -227,37 +255,39 @@ export default function ComparisonSandbox({
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Medicine</th>
-                  <th>Classification</th>
-                  <th>Pack Size</th>
-                  <th>Package Price</th>
-                  <th>Calculated Unit Price</th>
-                  <th>Potential Savings</th>
+                  <th>{isHindi ? 'दवा का नाम' : 'Medicine'}</th>
+                  <th>{isHindi ? 'वर्गीकरण' : 'Classification'}</th>
+                  <th>{isHindi ? 'पैक साइज़' : 'Pack Size'}</th>
+                  <th>{isHindi ? 'पैक मूल्य' : 'Package Price'}</th>
+                  <th>{isHindi ? 'मानक इकाई मूल्य' : 'Calculated Unit Price'}</th>
+                  <th>{isHindi ? 'संभावित बचत' : 'Potential Savings'}</th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonResult.items && comparisonResult.items.map((item, idx) => (
-                  <tr key={item.medicine_id || idx}>
+                  <tr key={item.medicine_id || item.product_id || idx}>
                     <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>
                       {item.brand_name}
                     </td>
                     <td>
                       <span className={item.is_jan_aushadhi ? 'badge badge-generic' : 'badge badge-brand'}>
-                        {item.is_jan_aushadhi ? 'PMBJP Generic' : 'Branded MRP'}
+                        {item.is_jan_aushadhi ? (isHindi ? 'पीएमबीजेपी जेनेरिक' : 'PMBJP Generic') : (isHindi ? 'ब्रांडेड एमआरपी' : 'Branded MRP')}
                       </span>
                     </td>
                     <td>{item.pack_size} {item.pack_unit}</td>
-                    <td style={{ fontWeight: 700 }}>₹{item.package_price_inr}</td>
+                    <td style={{ fontWeight: 700 }}>₹{item.package_price_inr ?? item.listed_price_inr ?? '—'}</td>
                     <td style={{ fontWeight: 700, color: 'var(--terracotta-600)' }}>
-                      ₹{item.unit_price_inr} / unit
+                      ₹{item.unit_price_inr ?? '—'} / {isHindi ? 'इकाई' : 'unit'}
                     </td>
                     <td>
                       {item.savings_vs_highest_pct ? (
                         <span style={{ color: 'var(--green-700)', fontWeight: 800 }}>
-                          Save {item.savings_vs_highest_pct}% (₹{item.unit_savings_vs_highest_inr}/unit)
+                          {isHindi
+                            ? `बचत ${item.savings_vs_highest_pct}% (₹${item.unit_savings_vs_highest_inr}/इकाई)`
+                            : `Save ${item.savings_vs_highest_pct}% (₹${item.unit_savings_vs_highest_inr}/unit)`}
                         </span>
                       ) : (
-                        <span style={{ color: 'var(--text-dim)' }}>Baseline (Highest)</span>
+                        <span style={{ color: 'var(--text-dim)' }}>{isHindi ? 'आधारभूत (अधिकतम)' : 'Baseline (Highest)'}</span>
                       )}
                     </td>
                   </tr>
@@ -266,20 +296,20 @@ export default function ComparisonSandbox({
             </table>
           </div>
 
-          {comparisonResult.cautionary_notice && (
+          {(comparisonResult.cautionary_notice || comparisonResult.safety_disclaimer) && (
             <div style={{
               padding: '0.75rem 1rem',
               background: 'var(--disclaimer-bg)',
               border: '1px solid var(--disclaimer-border)',
               borderRadius: '8px',
-              color: 'var(--disclaimer-text)',
+              color: 'var(--terracotta-700)',
               fontSize: '0.76rem',
               display: 'flex',
               gap: '0.4rem',
               alignItems: 'center',
             }}>
-              <AlertCircle size={15} />
-              <span>{comparisonResult.cautionary_notice}</span>
+              <AlertCircle size={15} style={{ flexShrink: 0 }} />
+              <span>{comparisonResult.cautionary_notice || comparisonResult.safety_disclaimer}</span>
             </div>
           )}
         </div>

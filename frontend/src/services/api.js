@@ -51,8 +51,10 @@ export const api = {
 
   // Price Comparison
   comparePrices: (medicineIds) => {
+    const ids = medicineIds.map(Number);
     return apiClient.post('/api/v1/prices/compare', {
-      medicine_ids: medicineIds.map(Number),
+      product_ids: ids,
+      medicine_ids: ids,
     });
   },
 

@@ -86,6 +86,7 @@ class PriceComparisonService:
             items.append(
                 PriceComparisonItem(
                     product_id=p.id,
+                    medicine_id=p.id,
                     brand_name=p.brand_name,
                     generic_name=p.generic_name,
                     manufacturer_name=p.manufacturer_name,
@@ -97,6 +98,7 @@ class PriceComparisonService:
                     pack_size=p.pack_size,
                     pack_unit=p.pack_unit,
                     listed_price_inr=listed_price,
+                    package_price_inr=listed_price,
                     unit_price_inr=unit_price,
                     price_type=price_type_val,
                     source_name=source_nm,
@@ -213,9 +215,31 @@ class PriceComparisonService:
         summary_notes.append("Unit prices are normalized per tablet/capsule/ml for fair packaging comparison.")
         summary_notes.append("Prices reflect official government ceilings or verified MRPs. Local retail prices may vary.")
 
+        # Compute savings vs highest unit price across items for clear UI matrix presentation
+        valid_unit_prices = [it.unit_price_inr for it in items if it.unit_price_inr is not None and it.unit_price_inr > 0]
+        max_unit_price = max(valid_unit_prices) if valid_unit_prices else None
+        max_savings = 0.0
+
+        if max_unit_price:
+            for it in items:
+                if it.unit_price_inr is not None and it.unit_price_inr < max_unit_price:
+                    unit_diff = round(max_unit_price - it.unit_price_inr, 2)
+                    pct = round((unit_diff / max_unit_price) * 100, 1)
+                    it.unit_savings_vs_highest_inr = unit_diff
+                    it.savings_vs_highest_pct = pct
+                    if pct > max_savings:
+                        max_savings = pct
+
+        cautionary = None
+        invalid_notes = [c.notes for c in comparisons if not c.is_comparable]
+        if invalid_notes:
+            cautionary = invalid_notes[0]
+
         return PriceComparisonResponse(
             items=items,
             comparisons=comparisons,
             summary_notes=summary_notes,
             safety_disclaimer=SafetyValidationService.get_standard_disclaimer(),
+            max_savings_percentage=max_savings if max_savings > 0 else None,
+            cautionary_notice=cautionary,
         )

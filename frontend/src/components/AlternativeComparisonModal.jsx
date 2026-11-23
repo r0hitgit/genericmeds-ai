@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Scale,
-  CheckCircle2,
-  AlertCircle,
-  X,
+  TrendingDown,
+  ShieldCheck,
   Plus,
   MapPin,
-  ArrowUpRight,
-  ShieldCheck,
-  TrendingDown
+  X,
+  AlertCircle,
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -18,15 +18,32 @@ export default function AlternativeComparisonModal({
   onClose,
   onAddToSandbox,
   onLocateStores,
-  language,
+  language = 'en',
 }) {
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isHindi = language === 'hi';
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  // Lock body scroll while modal is mounted
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   useEffect(() => {
-    if (!medicine) return;
+    if (!medicine || !medicine.id) return;
     let isMounted = true;
     const fetchAlternatives = async () => {
       setLoading(true);
@@ -39,7 +56,7 @@ export default function AlternativeComparisonModal({
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message);
+          setError(err.message || (isHindi ? 'विकल्प खोजने में विफल।' : 'Failed to fetch alternatives.'));
           setLoading(false);
         }
       }
@@ -48,13 +65,13 @@ export default function AlternativeComparisonModal({
     return () => {
       isMounted = false;
     };
-  }, [medicine]);
+  }, [medicine, isHindi]);
 
   if (!medicine) return null;
 
   return createPortal(
     <>
-      {/* 1. Backdrop Overlay: Apple-style glassmorphism fading the main content, sits below sticky Navbar (1001) & Footer (1001) */}
+      {/* 1. Backdrop Overlay */}
       <div
         onClick={onClose}
         style={{
@@ -69,12 +86,12 @@ export default function AlternativeComparisonModal({
           background: 'rgba(15, 23, 42, 0.48)',
           backdropFilter: 'blur(16px) saturate(180%)',
           WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-          animation: 'fadeIn 0.25s ease-out',
-          cursor: 'pointer',
+          animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
+        aria-hidden="true"
       />
 
-      {/* 2. Modal Centering Container: Centers the comparison card gracefully in viewport, above backdrop */}
+      {/* 2. Modal Container */}
       <div
         style={{
           position: 'fixed',
@@ -82,9 +99,7 @@ export default function AlternativeComparisonModal({
           left: 0,
           right: 0,
           bottom: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 1002,
+          zIndex: 801,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -93,318 +108,332 @@ export default function AlternativeComparisonModal({
         }}
       >
         <div
+          role="dialog"
+          aria-modal="true"
           onClick={(e) => e.stopPropagation()}
+          className="animate-fade-in"
           style={{
+            pointerEvents: 'auto',
             background: 'var(--bg-surface)',
-            borderRadius: '18px',
             border: '1px solid var(--border-subtle)',
+            borderRadius: '16px',
             maxWidth: '880px',
             width: '100%',
-            maxHeight: 'calc(100vh - 120px)',
+            maxHeight: '90vh',
             display: 'flex',
             flexDirection: 'column',
-            boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            position: 'relative',
             overflow: 'hidden',
-            animation: 'fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
-            pointerEvents: 'auto',
-            cursor: 'default',
           }}
         >
-        {/* Header */}
-        <div style={{
-          padding: '1.25rem 1.5rem',
-          borderBottom: '1px solid var(--border-subtle)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'var(--bg-surface-elevated)',
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <Scale size={18} color="var(--terracotta-600)" />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-                {language === 'hi' ? 'सत्यापित जेनेरिक विकल्प व मूल्य तुलना' : 'Verified Generic Alternative & Price Comparison'}
-              </h3>
-              <span className="badge badge-savings">
-                <TrendingDown size={12} />
-                <span>Save up to 80%</span>
-              </span>
+          {/* Header */}
+          <div style={{
+            padding: '1.25rem 1.5rem',
+            borderBottom: '1px solid var(--border-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'var(--bg-surface-elevated)',
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <Scale size={18} color="var(--terracotta-600)" />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+                  {isHindi ? 'सत्यापित जेनेरिक विकल्प व मूल्य तुलना' : 'Verified Generic Alternative & Price Comparison'}
+                </h3>
+                <span className="badge badge-savings">
+                  <TrendingDown size={12} />
+                  <span>{isHindi ? '80% तक बचत' : 'Save up to 80%'}</span>
+                </span>
+              </div>
+              <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
+                {isHindi
+                  ? 'समान सक्रिय घटक, क्षमता समानता और जन औषधि मूल्य तुलना'
+                  : 'Identical active ingredients, strength equivalence & Jan Aushadhi pricing comparison'}
+              </p>
             </div>
-            <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-              Identical active ingredients, strength equivalence & Jan Aushadhi pricing comparison
-            </p>
+
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-muted)',
+                background: 'var(--bg-surface)',
+                cursor: 'pointer',
+              }}
+            >
+              <X size={16} />
+            </button>
           </div>
 
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
+          {/* Body */}
+          <div style={{ padding: '1.5rem', overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Baseline Prescribed Medicine Card */}
+            <div style={{
+              background: 'var(--bg-surface-elevated)',
               border: '1px solid var(--border-subtle)',
+              borderRadius: '10px',
+              padding: '1rem 1.25rem',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--text-muted)',
-              background: 'var(--bg-surface)',
-            }}
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Baseline Prescribed Medicine Card */}
-          <div style={{
-            background: 'var(--bg-surface-elevated)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: '10px',
-            padding: '1rem 1.25rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div>
-                <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-dim)', letterSpacing: '0.04em' }}>
-                  Baseline Prescribed Product
-                </span>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0.1rem 0' }}>
-                  {medicine.brand_name}
-                </h4>
-              </div>
-
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                  {medicine.latest_price ? `₹${medicine.latest_price.amount_inr}` : 'Price Unverified'}
-                </div>
-                {medicine.latest_price?.unit_price_inr && (
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                    ₹{medicine.latest_price.unit_price_inr} / unit
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-dim)', letterSpacing: '0.04em' }}>
+                    {isHindi ? 'निर्धारित दवा (आधारभूत)' : 'Baseline Prescribed Product'}
                   </span>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', margin: '0.1rem 0' }}>
+                    {medicine.brand_name}
+                  </h4>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    {medicine.latest_price ? `₹${medicine.latest_price.amount_inr}` : (isHindi ? 'मूल्य अप्रमाणित' : 'Price Unverified')}
+                  </div>
+                  {medicine.latest_price?.unit_price_inr && (
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                      ₹{medicine.latest_price.unit_price_inr} / {isHindi ? 'इकाई' : 'unit'}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                <strong>{isHindi ? 'दवा रूप:' : 'Formulation:'}</strong> {medicine.dosage_form} • {medicine.pack_size} {medicine.pack_unit} • {medicine.release_type}
+              </div>
+
+              {medicine.ingredients && medicine.ingredients.length > 0 && (
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', background: 'var(--bg-surface)', padding: '0.45rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                  <strong>{isHindi ? 'सक्रिय साल्ट:' : 'Active Salts:'}</strong> {medicine.ingredients.map((ing) => `${ing.name} (${ing.strength_value} ${ing.strength_unit})`).join(', ')}
+                </div>
+              )}
+            </div>
+
+            {loading && (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  {isHindi ? 'सत्यापित जन औषधि एवं एनपीपीए डेटाबेस का विश्लेषण जारी है...' : 'Analyzing verified Jan Aushadhi & NPPA database...'}
+                </p>
+                <p style={{ fontSize: '0.76rem' }}>
+                  {isHindi ? 'सक्रिय साल्ट, समान क्षमता और संभावित बचत का सत्यापन किया जा रहा है...' : 'Verifying active salts, identical strengths, and potential savings...'}
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div style={{ padding: '1rem', background: 'var(--disclaimer-bg)', border: '1px solid var(--disclaimer-border)', borderRadius: '8px', color: 'var(--terracotta-700)', fontSize: '0.82rem', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {!loading && !error && data && (
+              <>
+                {data.candidates.length === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--bg-surface-elevated)', borderRadius: '10px' }}>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.35rem' }}>
+                      {isHindi ? 'वर्तमान सूची में कोई सटीक सत्यापित जेनेरिक विकल्प नहीं मिला' : 'No exact verified generic match found in current catalogue'}
+                    </h4>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto' }}>
+                      {isHindi
+                        ? 'सटीक साल्ट और क्षमता से मेल खाने वाला जेनेरिक रूप वर्तमान में सूचीबद्ध नहीं है। कृपया पंजीकृत फार्मासिस्ट से परामर्श लें।'
+                        : 'A generic formulation matching the exact salts and strength profile is not currently listed. Please consult a registered pharmacist.'}
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                        {isHindi ? `सत्यापित जेनेरिक विकल्प (${data.candidates.length})` : `Verified Generic Equivalents (${data.candidates.length})`}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--terracotta-600)', fontWeight: 600 }}>
+                        {isHindi ? 'नैदानिक समानता व बचत अनुसार क्रमबद्ध' : 'Sorted by Clinical Match & Savings'}
+                      </span>
+                    </div>
+
+                    <div className="data-table-container">
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>{isHindi ? 'जेनेरिक विकल्प' : 'Generic Alternative'}</th>
+                            <th>{isHindi ? 'सक्रिय संरचना' : 'Active Composition'}</th>
+                            <th>{isHindi ? 'समानता रेटिंग' : 'Match Rating'}</th>
+                            <th>{isHindi ? 'पैक मूल्य' : 'Pack Price'}</th>
+                            <th>{isHindi ? 'इकाई मूल्य' : 'Unit Price'}</th>
+                            <th>{isHindi ? 'संभावित बचत' : 'Potential Savings'}</th>
+                            <th>{isHindi ? 'कार्रवाई' : 'Actions'}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data.candidates.map((cand, idx) => {
+                            const prod = cand.product;
+                            const isExact = cand.match_classification === 'EXACT_COMPOSITION_MATCH';
+                            return (
+                              <tr key={prod.id || idx}>
+                                <td>
+                                  <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                                    {prod.brand_name}
+                                  </div>
+                                  {prod.is_jan_aushadhi && (
+                                    <span className="badge badge-generic" style={{ marginTop: '0.2rem' }}>
+                                      <ShieldCheck size={11} />
+                                      <span>{isHindi ? 'जन औषधि केंद्र' : 'PMBJP Kendra'}</span>
+                                    </span>
+                                  )}
+                                </td>
+                                <td style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', maxWidth: '200px' }}>
+                                  {prod.ingredients.map((i) => `${i.name} ${i.strength_value}${i.strength_unit}`).join(', ')}
+                                  <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem' }}>{prod.dosage_form}</div>
+                                </td>
+                                <td>
+                                  {isExact ? (
+                                    <span className="badge badge-generic" style={{ fontWeight: 700 }}>
+                                      {isHindi ? 'सटीक समानता' : 'Exact Match'}
+                                    </span>
+                                  ) : (
+                                    <span className="badge badge-brand">
+                                      {cand.match_classification}
+                                    </span>
+                                  )}
+                                </td>
+                                <td style={{ fontWeight: 700 }}>
+                                  {prod.latest_price ? `₹${prod.latest_price.amount_inr}` : (isHindi ? 'अप्रमाणित' : 'Unverified')}
+                                  <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', fontWeight: 400 }}>
+                                    ({prod.pack_size} {prod.pack_unit})
+                                  </div>
+                                </td>
+                                <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                                  {cand.alternative_unit_price ? `₹${cand.alternative_unit_price}` : '—'}
+                                </td>
+                                <td>
+                                  {cand.savings_percentage ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                      <span style={{ color: 'var(--green-700)', fontWeight: 800, fontSize: '0.85rem' }}>
+                                        {isHindi ? `बचत ${cand.savings_percentage}%` : `Save ${cand.savings_percentage}%`}
+                                      </span>
+                                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                                        {isHindi ? `₹${cand.unit_savings_inr} बचत / इकाई` : `₹${cand.unit_savings_inr} saved / unit`}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>
+                                      {isHindi ? 'समान / न्यूनतम' : 'Same / Minimal'}
+                                    </span>
+                                  )}
+                                </td>
+                                <td>
+                                  <div style={{ display: 'flex', gap: '0.35rem' }}>
+                                    <button
+                                      onClick={() => onAddToSandbox && onAddToSandbox(prod)}
+                                      title={isHindi ? 'सैंडबॉक्स में जोड़ें' : 'Add to Comparison Sandbox'}
+                                      style={{
+                                        padding: '0.35rem 0.55rem',
+                                        borderRadius: '6px',
+                                        background: 'var(--bg-surface)',
+                                        border: '1px solid var(--border-subtle)',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 600,
+                                        color: 'var(--text-secondary)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.2rem',
+                                        cursor: 'pointer',
+                                      }}
+                                    >
+                                      <Plus size={11} />
+                                      <span>{isHindi ? 'सैंडबॉक्स' : 'Sandbox'}</span>
+                                    </button>
+
+                                    {prod.is_jan_aushadhi && onLocateStores && (
+                                      <button
+                                        onClick={() => {
+                                          onClose();
+                                          onLocateStores();
+                                        }}
+                                        className="btn-primary"
+                                        style={{
+                                          padding: '0.35rem 0.65rem',
+                                          fontSize: '0.72rem',
+                                          borderRadius: '6px',
+                                        }}
+                                      >
+                                        <MapPin size={11} />
+                                        <span>{isHindi ? 'केंद्र खोजें' : 'Find'}</span>
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 )}
-              </div>
-            </div>
 
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              <strong>Formulation:</strong> {medicine.dosage_form} • {medicine.pack_size} {medicine.pack_unit} • {medicine.release_type}
-            </div>
-
-            {medicine.ingredients && medicine.ingredients.length > 0 && (
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', background: 'var(--bg-surface)', padding: '0.45rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                <strong>Active Salts:</strong> {medicine.ingredients.map((ing) => `${ing.name} (${ing.strength_value} ${ing.strength_unit})`).join(', ')}
-              </div>
+                {/* Safety notice disclaimer from server */}
+                {data.safety_notice && (
+                  <div style={{
+                    padding: '0.75rem 1rem',
+                    background: 'var(--disclaimer-bg)',
+                    border: '1px solid var(--disclaimer-border)',
+                    borderRadius: '8px',
+                    fontSize: '0.74rem',
+                    color: 'var(--terracotta-700)',
+                    display: 'flex',
+                    gap: '0.4rem',
+                    alignItems: 'flex-start',
+                  }}>
+                    <AlertCircle size={15} style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div>
+                      <strong>{isHindi ? 'नैदानिक सुरक्षा सलाह:' : 'Clinical Safety Advisory:'}</strong> {data.safety_notice}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          {loading && (
-            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>Analyzing verified Jan Aushadhi & NPPA database...</p>
-              <p style={{ fontSize: '0.76rem' }}>Verifying active salts, identical strengths, and potential savings...</p>
-            </div>
-          )}
-
-          {error && (
-            <div style={{ padding: '1rem', background: 'var(--disclaimer-bg)', border: '1px solid var(--disclaimer-border)', borderRadius: '8px', color: 'var(--terracotta-700)', fontSize: '0.82rem', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-              <AlertCircle size={16} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {!loading && !error && data && (
-            <>
-              {data.candidates.length === 0 ? (
-                <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--bg-surface-elevated)', borderRadius: '10px' }}>
-                  <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', margin: '0 0 0.35rem' }}>
-                    No exact verified generic match found in current catalogue
-                  </h4>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto' }}>
-                    A generic formulation matching the exact salts and strength profile is not currently listed. Please consult a registered pharmacist.
-                  </p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                      Verified Generic Equivalents ({data.candidates.length})
-                    </span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--terracotta-600)', fontWeight: 600 }}>
-                      Sorted by Clinical Match & Savings
-                    </span>
-                  </div>
-
-                  <div className="data-table-container">
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Generic Alternative</th>
-                          <th>Active Composition</th>
-                          <th>Match Rating</th>
-                          <th>Pack Price</th>
-                          <th>Unit Price</th>
-                          <th>Potential Savings</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.candidates.map((cand, idx) => {
-                          const prod = cand.product;
-                          const isExact = cand.match_classification === 'EXACT_COMPOSITION_MATCH';
-                          return (
-                            <tr key={prod.id || idx}>
-                              <td>
-                                <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                                  {prod.brand_name}
-                                </div>
-                                {prod.is_jan_aushadhi && (
-                                  <span className="badge badge-generic" style={{ marginTop: '0.2rem' }}>
-                                    <ShieldCheck size={11} />
-                                    <span>PMBJP Kendra</span>
-                                  </span>
-                                )}
-                              </td>
-                              <td style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', maxWidth: '200px' }}>
-                                {prod.ingredients.map((i) => `${i.name} ${i.strength_value}${i.strength_unit}`).join(', ')}
-                                <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem' }}>{prod.dosage_form}</div>
-                              </td>
-                              <td>
-                                {isExact ? (
-                                  <span className="badge badge-generic" style={{ fontWeight: 700 }}>
-                                    Exact Match
-                                  </span>
-                                ) : (
-                                  <span className="badge badge-brand">
-                                    {cand.match_classification}
-                                  </span>
-                                )}
-                              </td>
-                              <td style={{ fontWeight: 700 }}>
-                                {prod.latest_price ? `₹${prod.latest_price.amount_inr}` : 'Unverified'}
-                                <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', fontWeight: 400 }}>
-                                  ({prod.pack_size} {prod.pack_unit})
-                                </div>
-                              </td>
-                              <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                                {cand.alternative_unit_price ? `₹${cand.alternative_unit_price}` : '—'}
-                              </td>
-                              <td>
-                                {cand.savings_percentage ? (
-                                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <span style={{ color: 'var(--green-700)', fontWeight: 800, fontSize: '0.85rem' }}>
-                                      Save {cand.savings_percentage}%
-                                    </span>
-                                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                                      ₹{cand.unit_savings_inr} saved / unit
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>Same / Minimal</span>
-                                )}
-                              </td>
-                              <td>
-                                <div style={{ display: 'flex', gap: '0.35rem' }}>
-                                  <button
-                                    onClick={() => onAddToSandbox && onAddToSandbox(prod)}
-                                    title="Add to Comparison Sandbox"
-                                    style={{
-                                      padding: '0.35rem 0.55rem',
-                                      borderRadius: '6px',
-                                      background: 'var(--bg-surface)',
-                                      border: '1px solid var(--border-subtle)',
-                                      fontSize: '0.72rem',
-                                      fontWeight: 600,
-                                      color: 'var(--text-secondary)',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '0.2rem',
-                                    }}
-                                  >
-                                    <Plus size={11} />
-                                    <span>Sandbox</span>
-                                  </button>
-
-                                  {prod.is_jan_aushadhi && onLocateStores && (
-                                    <button
-                                      onClick={() => {
-                                        onClose();
-                                        onLocateStores();
-                                      }}
-                                      className="btn-primary"
-                                      style={{
-                                        padding: '0.35rem 0.65rem',
-                                        fontSize: '0.72rem',
-                                        borderRadius: '6px',
-                                      }}
-                                    >
-                                      <MapPin size={11} />
-                                      <span>Find</span>
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Safety notice disclaimer from server */}
-              {data.safety_notice && (
-                <div style={{
-                  padding: '0.75rem 1rem',
-                  background: 'var(--disclaimer-bg)',
-                  border: '1px solid var(--disclaimer-border)',
-                  borderRadius: '8px',
-                  fontSize: '0.74rem',
-                  color: 'var(--disclaimer-text)',
-                  display: 'flex',
-                  gap: '0.4rem',
-                  alignItems: 'flex-start',
-                }}>
-                  <AlertCircle size={15} style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <div>
-                    <strong>Clinical Safety Advisory:</strong> {data.safety_notice}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          padding: '0.85rem 1.5rem',
-          borderTop: '1px solid var(--border-subtle)',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '0.65rem',
-          background: 'var(--bg-surface)',
-        }}>
-          <button onClick={onClose} className="btn-secondary" style={{ padding: '0.5rem 1rem' }}>
-            Close
-          </button>
-          {onLocateStores && (
-            <button
-              onClick={() => {
-                onClose();
-                onLocateStores();
-              }}
-              className="btn-primary"
-              style={{ padding: '0.5rem 1.25rem' }}
-            >
-              <MapPin size={14} />
-              <span>Locate Nearby Kendra</span>
+          {/* Footer */}
+          <div style={{
+            padding: '0.85rem 1.5rem',
+            borderTop: '1px solid var(--border-subtle)',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.65rem',
+            background: 'var(--bg-surface)',
+          }}>
+            <button onClick={onClose} className="btn-secondary" style={{ padding: '0.5rem 1rem' }}>
+              {isHindi ? 'बंद करें' : 'Close'}
             </button>
-          )}
+            {onLocateStores && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onLocateStores();
+                }}
+                className="btn-primary"
+                style={{ padding: '0.5rem 1.25rem' }}
+              >
+                <MapPin size={14} />
+                <span>{isHindi ? 'निकटतम केंद्र खोजें' : 'Locate Nearby Kendra'}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  </>,
-  document.body
-);
+    </>,
+    document.body
+  );
 }

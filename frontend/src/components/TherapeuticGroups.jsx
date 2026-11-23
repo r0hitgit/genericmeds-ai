@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Tag, Search, ArrowUpRight, Layers } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function TherapeuticGroups({ onSelectGroup, language }) {
+export default function TherapeuticGroups({ onSelectGroup, language = 'en' }) {
   const [groups, setGroups] = useState([]);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isHindi = language === 'hi';
 
   useEffect(() => {
     let isMounted = true;
@@ -19,7 +20,7 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || 'Failed to fetch therapeutic groups.');
+          setError(err.message || (isHindi ? 'समूह लोड करने में विफल।' : 'Failed to fetch therapeutic groups.'));
           setLoading(false);
         }
       }
@@ -28,7 +29,7 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isHindi]);
 
   const filteredGroups = groups.filter((g) =>
     g.name.toLowerCase().includes(filter.toLowerCase())
@@ -42,15 +43,17 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            {language === 'hi' ? '68 चिकित्सीय समूह निर्देशिका' : '68 Reconciled PMBI Therapeutic Groups'}
+            {isHindi ? '68 चिकित्सीय समूह निर्देशिका' : '68 Reconciled PMBI Therapeutic Groups'}
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-            Explore standardized classifications across {totalProductsCount.toLocaleString()} Jan Aushadhi generic products.
+            {isHindi
+              ? `${totalProductsCount.toLocaleString()} जन औषधि जेनेरिक उत्पादों में मानकीकृत वर्गीकरण देखें।`
+              : `Explore standardized classifications across ${totalProductsCount.toLocaleString()} Jan Aushadhi generic products.`}
           </p>
         </div>
 
         <span style={{ fontSize: '0.8rem', color: 'var(--terracotta-600)', fontWeight: 600 }}>
-          {groups.length} Standardized Groups
+          {groups.length} {isHindi ? 'मानकीकृत समूह' : 'Standardized Groups'}
         </span>
       </div>
 
@@ -60,7 +63,7 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
           type="text"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="Filter groups (e.g. Cardiovascular, Antibiotic)..."
+          placeholder={isHindi ? 'समूह खोजें (उदा. Cardiovascular, Antibiotic)...' : 'Filter groups (e.g. Cardiovascular, Antibiotic)...'}
           className="form-input"
           style={{ paddingLeft: '2rem', fontSize: '0.82rem' }}
         />
@@ -102,10 +105,10 @@ export default function TherapeuticGroups({ onSelectGroup, language }) {
                 color: 'var(--text-muted)',
               }}>
                 <span style={{ fontWeight: 600, color: 'var(--terracotta-600)' }}>
-                  {g.total_products} Products
+                  {g.total_products} {isHindi ? 'उत्पाद' : 'Products'}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                  <span>View</span>
+                  <span>{isHindi ? 'देखें' : 'View'}</span>
                   <ArrowUpRight size={11} />
                 </span>
               </div>

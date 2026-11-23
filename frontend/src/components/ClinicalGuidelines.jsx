@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FlaskConical, AlertCircle, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function ClinicalGuidelines({ language }) {
+export default function ClinicalGuidelines({ language = 'en' }) {
   const [guidelines, setGuidelines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isHindi = language === 'hi';
 
   useEffect(() => {
     let isMounted = true;
@@ -19,7 +20,7 @@ export default function ClinicalGuidelines({ language }) {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || 'Failed to load clinical guidelines.');
+          setError(err.message || (isHindi ? 'दिशानिर्देश लोड करने में विफल।' : 'Failed to load clinical guidelines.'));
           setLoading(false);
         }
       }
@@ -28,7 +29,7 @@ export default function ClinicalGuidelines({ language }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isHindi]);
 
   return (
     <section className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -36,15 +37,17 @@ export default function ClinicalGuidelines({ language }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
-            {language === 'hi' ? 'दवा वितरण नियम व सुरक्षा दिशानिर्देश' : 'Safe Dispensing Protocols & Guidelines'}
+            {isHindi ? 'दवा वितरण नियम व सुरक्षा दिशानिर्देश' : 'Safe Dispensing Protocols & Guidelines'}
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-            Authoritative Schedule H/H1, Cold-Chain, and Narrow Therapeutic Index (NTI) rules.
+            {isHindi
+              ? 'आधिकारिक शेड्यूल H/H1, कोल्ड-चेन, और संकीर्ण चिकित्सीय सूचकांक (NTI) नियम।'
+              : 'Authoritative Schedule H/H1, Cold-Chain, and Narrow Therapeutic Index (NTI) rules.'}
           </p>
         </div>
 
         <span style={{ fontSize: '0.8rem', color: 'var(--terracotta-600)', fontWeight: 600 }}>
-          {guidelines.length} Clinical Protocols
+          {guidelines.length} {isHindi ? 'नैदानिक प्रोटोकॉल' : 'Clinical Protocols'}
         </span>
       </div>
 
@@ -99,7 +102,7 @@ export default function ClinicalGuidelines({ language }) {
                 }}>
                   <AlertCircle size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <strong>Rule:</strong> {g.dispensing_rule}
+                    <strong>{isHindi ? 'वितरण नियम:' : 'Rule:'}</strong> {g.dispensing_rule}
                   </div>
                 </div>
               </div>
@@ -113,7 +116,7 @@ export default function ClinicalGuidelines({ language }) {
                 fontSize: '0.72rem',
                 color: 'var(--text-dim)',
               }}>
-                <span>Forms: {g.strengths_forms || 'Oral / Topical'}</span>
+                <span>{isHindi ? 'उपलब्ध रूप:' : 'Forms:'} {g.strengths_forms || (isHindi ? 'मौखिक / सामयिक' : 'Oral / Topical')}</span>
                 {g.reference_url && (
                   <a
                     href={g.reference_url}
@@ -121,7 +124,7 @@ export default function ClinicalGuidelines({ language }) {
                     rel="noopener noreferrer"
                     style={{ color: 'var(--terracotta-600)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
                   >
-                    <span>Reference</span>
+                    <span>{isHindi ? 'संदर्भ स्रोत' : 'Reference'}</span>
                     <ExternalLink size={11} />
                   </a>
                 )}
