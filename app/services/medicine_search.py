@@ -140,6 +140,33 @@ class MedicineSearchService:
                     exact_results.append(p)
                     seen_ids.add(p.id)
 
+        # If branded products are present in exact_results but no generic equivalent was matched,
+        # resolve top verified Jan Aushadhi alternatives so users always see the generic equivalent
+        if exact_results and not jan_aushadhi_only:
+            seen_ids = {p.id for p in exact_results}
+            branded_items = [p for p in exact_results if not p.is_jan_aushadhi]
+            has_generics = any(p.is_jan_aushadhi for p in exact_results)
+            if branded_items and not has_generics:
+                from app.services.alternatives import AlternativeMatchingService
+                from app.schemas.medicine import AlternativeSearchRequest
+                gen_ids = []
+                for b_prod in branded_items[:2]:
+                    alt_res = AlternativeMatchingService.match_alternatives(
+                        db, req=AlternativeSearchRequest(medicine_id=b_prod.id)
+                    )
+                    for cand in alt_res.candidates[:2]:
+                        if cand.product.id not in seen_ids and cand.product.id not in gen_ids:
+                            gen_ids.append(cand.product.id)
+                if gen_ids:
+                    gen_products = db.query(MedicineProduct).options(
+                        joinedload(MedicineProduct.ingredients).joinedload(ProductIngredient.ingredient),
+                        joinedload(MedicineProduct.prices),
+                    ).filter(MedicineProduct.id.in_(gen_ids)).all()
+                    for gp in gen_products:
+                        if gp.id not in seen_ids:
+                            exact_results.append(gp)
+                            seen_ids.add(gp.id)
+
         if exact_results:
             total_count = len(exact_results)
             paged = exact_results[offset : offset + limit]
@@ -181,7 +208,7 @@ class MedicineSearchService:
         total_count = base_query.count()
         results = base_query.offset(offset).limit(limit).all()
 
-        if not results:
+        if not results and total_count == 0:
             # Token-based multi-term fallback for brand + strength queries (e.g. 'omee 500', 'folvite 5mg')
             import re
             tokens = [t.strip() for t in re.split(r"[\s\-_,]+", q_clean) if len(t.strip()) >= 2]
