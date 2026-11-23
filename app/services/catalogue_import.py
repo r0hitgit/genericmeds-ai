@@ -645,25 +645,10 @@ class CatalogueImportService:
                                 existing_aliases.add(key)
                                 aliases_created += 1
 
-                # If branded market reference price is available, add/update retailer price record
-                if mkt_ref is not None:
-                    mkt_price_record = db.query(MedicinePrice).filter(
-                        MedicinePrice.product_id == linked_product_id,
-                        MedicinePrice.price_type == "retailer_price",
-                    ).first()
-                    if not mkt_price_record:
-                        mkt_price_record = MedicinePrice(
-                            product_id=linked_product_id,
-                            amount_inr=mkt_ref,
-                            price_type="retailer_price",
-                            pack_quantity=linked_product.pack_size or 10.0,
-                            unit_of_measure=linked_product.pack_unit or "tablets",
-                            source_id=src.id,
-                            source_url="Market Reference Indicative Sample",
-                            verified_at=datetime.now(timezone.utc),
-                            verification_status="verified",
-                        )
-                        db.add(mkt_price_record)
+                # Note: Branded market reference price (mkt_ref) belongs to the brand lookup entry
+                # (stored in BrandGenericLookup.branded_market_reference_inr) and must NOT be attached
+                # as a retailer_price to linked_product_id (the PMBJP Jan Aushadhi generic medicine),
+                # so the generic product retains its official subsidized government price.
 
         db.commit()
 

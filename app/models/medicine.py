@@ -50,6 +50,16 @@ class MedicineProduct(Base):
 
     @property
     def latest_verified_price(self):
+        # For PMBJP Jan Aushadhi generic medicines, prioritize the official government listed price
+        if self.is_jan_aushadhi:
+            for p in self.prices:
+                if p.verification_status == "verified" and p.price_type == "government_listed_price":
+                    return p
+            for p in self.prices:
+                if p.verification_status == "verified" and p.price_type != "retailer_price":
+                    return p
+
+        # For branded/standard medicines, return verified price (MRP or ceiling price)
         for p in self.prices:
             if p.verification_status == "verified":
                 return p

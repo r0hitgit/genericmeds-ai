@@ -72,3 +72,43 @@ def test_price_comparison_requires_at_least_two_products(client):
     response = client.post("/api/v1/prices/compare", json=payload)
     # Validation error from pydantic min_length=2
     assert response.status_code == 422
+
+
+def test_jan_aushadhi_generic_prefers_government_listed_price(client, db_session):
+    # Ensure that even if a retailer_price exists, Jan Aushadhi product (ID 2) strictly prefers government_listed_price
+    from app.models.medicine import MedicineProduct
+    from app.models.pricing import MedicinePrice
+    from datetime import datetime, timezone
+
+    p2 = db_session.query(MedicineProduct).filter(MedicineProduct.id == 2).first()
+    # Add a newer retailer_price
+    db_session.add(MedicinePrice(
+        product_id=p2.id,
+        amount_inr=30.0,
+        price_type="retailer_price",
+        pack_quantity=10.0,
+        unit_of_measure="tablets",
+        source_id=1,
+        verified_at=datetime.now(timezone.utc),
+        verification_status="verified",
+    ))
+    db_session.commit()
+
+    # latest_verified_price must still return the government_listed_price (10.0), not retailer_price (30.0)
+    assert p2.latest_verified_price.price_type == "government_listed_price"
+    assert p2.latest_verified_price.amount_inr == 10.0
+
+    payload = {
+        "product_ids": [1, 2],
+        "reference_product_id": 1,
+    }
+    response = client.post("/api/v1/prices/compare", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["items"]) == 2
+
+    jan_item = next(i for i in data["items"] if i["product_id"] == 2)
+    assert jan_item["listed_price_inr"] == 10.0
+    assert jan_item["price_type"] == "government_listed_price"
+    assert data["max_savings_percentage"] == 50.0
+
